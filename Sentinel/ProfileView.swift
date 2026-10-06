@@ -18,7 +18,8 @@ struct ProfileView: View {
             Button("Iniciar Sesión") {
                 
             }
-            .foregroundColor(.black)
+            .foregroundColor(.white)
+            .fontWeight(.bold)
             .padding()
             .frame(maxWidth: 350)
             .background(Color.yellow)
@@ -29,7 +30,8 @@ struct ProfileView: View {
             Button("Registrarse") {
                                 
             }
-            .foregroundColor(.black)
+            .foregroundColor(.white)
+            .fontWeight(.bold)
             .padding()
             .frame(maxWidth: 350)
             .background(Color.yellow)
