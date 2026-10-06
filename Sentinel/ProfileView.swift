@@ -9,9 +9,44 @@ import SwiftUI
 
 struct ProfileView: View {
     var body: some View {
-
+        VStack(spacing: 15) {
+            Text("¿No tienes cuenta?")
+                .font(.largeTitle)
+                .foregroundColor(.white)
+                .fontWeight(.bold)
+            
+            Button("Iniciar Sesión") {
+                
+            }
+            .foregroundColor(.black)
+            .padding()
+            .frame(maxWidth: 350)
+            .background(Color.yellow)
+            .cornerRadius(10)
+            .clipShape(Capsule())
+                
+                
+            Button("Registrarse") {
+                                
+            }
+            .foregroundColor(.black)
+            .padding()
+            .frame(maxWidth: 350)
+            .background(Color.yellow)
+            .cornerRadius(10)
+            .clipShape(Capsule())
+                
+            HStack(spacing: 15) {
+                Text("¿Necesitas ayuda?")
+                    .foregroundColor(.white)
+                Text("Contáctanos")
+                    .foregroundColor(Color(red: 51/255, green: 190/255, blue: 255/255))
+                    .italic()
+            }
+        }
     }
 }
+
 
 #Preview {
     ProfileView()
