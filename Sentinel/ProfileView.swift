@@ -41,9 +41,11 @@ struct ProfileView: View {
             HStack(spacing: 15) {
                 Text("¿Necesitas ayuda?")
                     .foregroundColor(.white)
-                Text("Contáctanos")
-                    .foregroundColor(Color(red: 51/255, green: 190/255, blue: 255/255))
-                    .italic()
+                Button("Contáctanos") {
+                
+                }
+                .foregroundColor(Color(red: 51/255, green: 190/255, blue: 255/255))
+                .italic()
             }
         }
     }
