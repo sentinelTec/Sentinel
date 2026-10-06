@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @State private var contactAlert = false
+    
     var body: some View {
         VStack(spacing: 15) {
             Text("¿No tienes cuenta?")
@@ -42,10 +44,16 @@ struct ProfileView: View {
                 Text("¿Necesitas ayuda?")
                     .foregroundColor(.white)
                 Button("Contáctanos") {
-                
+                    contactAlert = true
                 }
                 .foregroundColor(Color(red: 51/255, green: 190/255, blue: 255/255))
                 .italic()
+            }
+            .alert("Medios de contactos de la organización:", isPresented: $contactAlert) {
+                Button("Cerrar", role: .cancel) {
+                }
+            } message: {
+                Text("Teléfono: 55 4865 7031\nCorreo: rplsadmin@outlook.com")
             }
         }
     }
