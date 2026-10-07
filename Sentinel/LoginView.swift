@@ -30,7 +30,7 @@ struct LoginView: View {
                     Text("¿Aún no tienes cuenta?")
                         .foregroundColor(.white)
                     NavigationLink {
-                        LoginView()
+                        RegistrationView()
                     } label: {
                         Text("Registrate")
                             .foregroundColor(Color(red: 51/255, green: 190/255, blue: 255/255))
