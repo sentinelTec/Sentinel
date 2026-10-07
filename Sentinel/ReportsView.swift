@@ -29,12 +29,58 @@ struct ReportsView: View {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
-                TextField("Buscar titulo de reporte o url", text: $textoBusqueda)
+                TextField("Buscar reporte o url", text: $textoBusqueda)
             }
             .padding()
             .background(Color(red: 237/255, green: 237/255, blue: 237/255))
             .clipShape(Capsule())
             .padding(.horizontal)
+                    
+            HStack(spacing: 15) {
+                Button("Todos") {
+                    
+                }
+                .foregroundColor(.black)
+                .frame(maxHeight: 30)
+                .scaledToFill()
+                .padding()
+                .background(Color.white)
+                .cornerRadius(10)
+                .clipShape(Capsule())
+                    
+                Button("Circulación y seguridad") {
+                    
+                }
+                .foregroundColor(.black)
+                .frame(maxHeight: 30)
+                .scaledToFill()
+                .padding()
+                .background(Color.white)
+                .cornerRadius(10)
+                .clipShape(Capsule())
+                        
+                Button("Estacionamiento") {
+                    
+                }
+                .foregroundColor(.black)
+                .frame(maxHeight: 30)
+                .scaledToFill()
+                .padding()
+                .background(Color.white)
+                .cornerRadius(10)
+                .clipShape(Capsule())
+                            
+                Button("Estado del vehículo") {
+                    
+                }
+                .foregroundColor(.black)
+                .frame(maxHeight: 30)
+                .scaledToFill()
+                .padding()
+                .background(Color.white)
+                .cornerRadius(10)
+                .clipShape(Capsule())
+            }
         }
         .frame(maxWidth: 350)
     }
