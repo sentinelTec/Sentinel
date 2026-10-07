@@ -17,100 +17,105 @@ struct StatsView: View {
     ]
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Estadísticas")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                
-            Text("Reportes por categoría")
-                .font(.title2)
-                .foregroundColor(.white)
-                
-            HStack(spacing: 30) {
-                Text("Todas")
-                    .foregroundColor(.white)
-                    
-                Text("6")
-                    .foregroundColor(.white)
-            }
-                
-            BarraEstadistica(
-                cantidad: 100,
-                maximo: 100
-            )
-            .padding(.horizontal)
+        ZStack {
+            Color.appColor
+                .ignoresSafeArea()
             
-            HStack(spacing: 30) {
-                Text("Circulación y seguridad")
+            VStack(spacing: 20) {
+                Text("Estadísticas")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
                     .foregroundColor(.white)
+                
+                Text("Reportes por categoría")
+                    .font(.title2)
+                    .foregroundColor(.white)
+                
+                HStack(spacing: 30) {
+                    Text("Todas")
+                        .foregroundColor(.white)
                     
-                Text("3")
-                    .foregroundColor(.white)
-            }
+                    Text("6")
+                        .foregroundColor(.white)
+                }
                 
-            BarraEstadistica(
-                cantidad: 50,
-                maximo: 100
-            )
-            .padding(.horizontal)
-                
-            HStack(spacing: 30) {
-                Text("Estacionamiento")
-                    .foregroundColor(.white)
-                    
-                Text("1")
-                    .foregroundColor(.white)
-            }
-                
-            BarraEstadistica(
-                cantidad: 10,
-                maximo: 100
-            )
-            .padding(.horizontal)
-                
-            HStack(spacing: 30) {
-                Text("Administrativas")
-                    .foregroundColor(.white)
-                    
-                Text("1")
-                    .foregroundColor(.white)
-            }
-                
-            BarraEstadistica(
-                cantidad: 10,
-                maximo: 100
-            )
-            .padding(.horizontal)
-                
-            HStack(spacing: 30) {
-                Text("Estados de vehículo")
-                    .foregroundColor(.white)
-                    
-                Text("1")
-                    .foregroundColor(.white)
-            }
-                
-            BarraEstadistica(
-                cantidad: 10,
-                maximo: 100
-            )
-            .padding(.horizontal)
-                
-            Text("Esta pantalla muestra la cantidad de reportes que se han levantado en un lapso de una semana por categoría")
-                .foregroundColor(.white)
-                .frame(maxWidth: 375)
-                .multilineTextAlignment(.center)
-                
-            Chart(datos, id: \.0) { dato in
-                SectorMark(
-                    angle: .value("Cantidad", dato.1),
-                    angularInset: 1
+                BarraEstadistica(
+                    cantidad: 100,
+                    maximo: 100
                 )
+                .padding(.horizontal)
+                
+                HStack(spacing: 30) {
+                    Text("Circulación y seguridad")
+                        .foregroundColor(.white)
+                    
+                    Text("3")
+                        .foregroundColor(.white)
+                }
+                
+                BarraEstadistica(
+                    cantidad: 50,
+                    maximo: 100
+                )
+                .padding(.horizontal)
+                
+                HStack(spacing: 30) {
+                    Text("Estacionamiento")
+                        .foregroundColor(.white)
+                    
+                    Text("1")
+                        .foregroundColor(.white)
+                }
+                
+                BarraEstadistica(
+                    cantidad: 10,
+                    maximo: 100
+                )
+                .padding(.horizontal)
+                
+                HStack(spacing: 30) {
+                    Text("Administrativas")
+                        .foregroundColor(.white)
+                    
+                    Text("1")
+                        .foregroundColor(.white)
+                }
+                
+                BarraEstadistica(
+                    cantidad: 10,
+                    maximo: 100
+                )
+                .padding(.horizontal)
+                
+                HStack(spacing: 30) {
+                    Text("Estados de vehículo")
+                        .foregroundColor(.white)
+                    
+                    Text("1")
+                        .foregroundColor(.white)
+                }
+                
+                BarraEstadistica(
+                    cantidad: 10,
+                    maximo: 100
+                )
+                .padding(.horizontal)
+                
+                Text("Esta pantalla muestra la cantidad de reportes que se han levantado en un lapso de una semana por categoría")
+                    .foregroundColor(.white)
+                    .frame(maxWidth: 375)
+                    .multilineTextAlignment(.center)
+                
+                Chart(datos, id: \.0) { dato in
+                    SectorMark(
+                        angle: .value("Cantidad", dato.1),
+                        angularInset: 1
+                    )
+                }
+                .frame(height: 120)
+                .padding()
+                .foregroundStyle(.yellow)
             }
-            .frame(height: 120)
-            .padding()
-            .foregroundStyle(.yellow)
         }
     }
 }
