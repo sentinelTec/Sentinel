@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ReportsView: View {
-    @State var textoBusqueda = ""
+    @State private var textoBusqueda = ""
     @State private var categoriaSeleccionada = "Todos"
     
     var body: some View {
