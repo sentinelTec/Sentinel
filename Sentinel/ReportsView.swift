@@ -11,78 +11,82 @@ struct ReportsView: View {
     @State var textoBusqueda = ""
     
     var body: some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 20) {
-                Text("Reportes recientes")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+        ScrollView(.vertical) {
+            VStack(spacing: 20) {
+                HStack(spacing: 20) {
+                    Text("Reportes recientes")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    Button("", systemImage: "plus.square") {
+                        
+                    }
+                    .frame(width: 50, height: 50)
+                    .font(.system(size: 30))
                     .foregroundColor(.white)
-                        
-                Button("", systemImage: "plus.square") {
-                    
                 }
-                .frame(width: 50, height: 50)
-                .font(.system(size: 30))
-                .foregroundColor(.white)
-            }
-                    
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
-                TextField("Buscar reporte o url", text: $textoBusqueda)
-            }
-            .padding()
-            .background(Color(red: 237/255, green: 237/255, blue: 237/255))
-            .clipShape(Capsule())
-            .padding(.horizontal)
-                    
-            HStack(spacing: 15) {
-                Button("Todos") {
-                    
+                
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                    TextField("Buscar reporte o url", text: $textoBusqueda)
                 }
-                .foregroundColor(.black)
-                .frame(maxHeight: 30)
-                .scaledToFill()
                 .padding()
-                .background(Color.white)
-                .cornerRadius(10)
+                .background(Color(red: 237/255, green: 237/255, blue: 237/255))
                 .clipShape(Capsule())
-                    
-                Button("Circulación y seguridad") {
-                    
-                }
-                .foregroundColor(.black)
-                .frame(maxHeight: 30)
-                .scaledToFill()
-                .padding()
-                .background(Color.white)
-                .cornerRadius(10)
-                .clipShape(Capsule())
-                        
-                Button("Estacionamiento") {
-                    
-                }
-                .foregroundColor(.black)
-                .frame(maxHeight: 30)
-                .scaledToFill()
-                .padding()
-                .background(Color.white)
-                .cornerRadius(10)
-                .clipShape(Capsule())
+                .padding(.horizontal)
+                
+                ScrollView(.horizontal) {
+                    HStack(spacing: 15) {
+                        Button("Todos") {
                             
-                Button("Estado del vehículo") {
-                    
+                        }
+                        .foregroundColor(.black)
+                        .frame(maxHeight: 30)
+                        .scaledToFill()
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .clipShape(Capsule())
+                        
+                        Button("Circulación y seguridad") {
+                            
+                        }
+                        .foregroundColor(.black)
+                        .frame(maxHeight: 30)
+                        .scaledToFill()
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .clipShape(Capsule())
+                        
+                        Button("Estacionamiento") {
+                            
+                        }
+                        .foregroundColor(.black)
+                        .frame(maxHeight: 30)
+                        .scaledToFill()
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .clipShape(Capsule())
+                        
+                        Button("Estado del vehículo") {
+                            
+                        }
+                        .foregroundColor(.black)
+                        .frame(maxHeight: 30)
+                        .scaledToFill()
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .clipShape(Capsule())
+                    }
                 }
-                .foregroundColor(.black)
-                .frame(maxHeight: 30)
-                .scaledToFill()
-                .padding()
-                .background(Color.white)
-                .cornerRadius(10)
-                .clipShape(Capsule())
             }
+            .frame(maxWidth: 350)
         }
-        .frame(maxWidth: 350)
     }
 }
 
