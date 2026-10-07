@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ReportsView: View {
     @State var textoBusqueda = ""
+    @State private var categoriaSeleccionada = "Todos"
     
     var body: some View {
         ScrollView(.vertical) {
@@ -18,7 +19,7 @@ struct ReportsView: View {
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
-                    
+                        
                     Button("", systemImage: "plus.square") {
                         
                     }
@@ -26,7 +27,7 @@ struct ReportsView: View {
                     .font(.system(size: 30))
                     .foregroundColor(.white)
                 }
-                
+                    
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
@@ -36,56 +37,64 @@ struct ReportsView: View {
                 .background(Color(red: 237/255, green: 237/255, blue: 237/255))
                 .clipShape(Capsule())
                 .padding(.horizontal)
-                
+                    
                 ScrollView(.horizontal) {
                     HStack(spacing: 15) {
                         Button("Todos") {
-                            
+                            categoriaSeleccionada = "Todos"
                         }
                         .foregroundColor(.black)
                         .frame(maxHeight: 30)
                         .scaledToFill()
                         .padding()
-                        .background(Color.white)
+                        .background(categoriaSeleccionada == "Todos"
+                                    ? Color.yellow
+                                    : Color.white)
                         .cornerRadius(10)
                         .clipShape(Capsule())
                         
                         Button("Circulación y seguridad") {
-                            
+                            categoriaSeleccionada = "Circulación y Seguridad"
                         }
                         .foregroundColor(.black)
                         .frame(maxHeight: 30)
                         .scaledToFill()
                         .padding()
-                        .background(Color.white)
+                        .background(categoriaSeleccionada == "Circulación y Seguridad"
+                                    ? Color.yellow
+                                    : Color.white)
                         .cornerRadius(10)
                         .clipShape(Capsule())
                         
                         Button("Estacionamiento") {
-                            
+                            categoriaSeleccionada = "Estacionamiento"
                         }
                         .foregroundColor(.black)
                         .frame(maxHeight: 30)
                         .scaledToFill()
                         .padding()
-                        .background(Color.white)
+                        .background(categoriaSeleccionada == "Estacionamiento"
+                                    ? Color.yellow
+                                    : Color.white)
                         .cornerRadius(10)
                         .clipShape(Capsule())
-                        
-                        Button("Estado del vehículo") {
                             
+                        Button("Estado del vehículo") {
+                            categoriaSeleccionada = "Estado del vehículo"
                         }
                         .foregroundColor(.black)
                         .frame(maxHeight: 30)
                         .scaledToFill()
                         .padding()
-                        .background(Color.white)
+                        .background(categoriaSeleccionada == "Estado del vehículo"
+                                    ? Color.yellow
+                                    : Color.white)
                         .cornerRadius(10)
                         .clipShape(Capsule())
                     }
                 }
+                .frame(maxWidth: 350)
             }
-            .frame(maxWidth: 350)
         }
     }
 }
