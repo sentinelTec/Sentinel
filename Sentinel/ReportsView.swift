@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ReportsView: View {
+    @State var textoBusqueda = ""
+    
     var body: some View {
         VStack(spacing: 20) {
             HStack(spacing: 20) {
@@ -15,7 +17,7 @@ struct ReportsView: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
-                
+                        
                 Button("", systemImage: "plus.square") {
                     
                 }
@@ -23,7 +25,18 @@ struct ReportsView: View {
                 .font(.system(size: 30))
                 .foregroundColor(.white)
             }
+                    
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.gray)
+                TextField("Buscar titulo de reporte o url", text: $textoBusqueda)
+            }
+            .padding()
+            .background(Color(red: 237/255, green: 237/255, blue: 237/255))
+            .clipShape(Capsule())
+            .padding(.horizontal)
         }
+        .frame(maxWidth: 350)
     }
 }
 
