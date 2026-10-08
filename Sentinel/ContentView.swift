@@ -10,15 +10,15 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         TabView {
-            Tab("", systemImage: "chart.bar.horizontal.page") {
+            Tab("Reportes", systemImage: "chart.bar.horizontal.page") {
                 ReportsView()
             }
             
-            Tab("", systemImage: "chart.bar.xaxis") {
+            Tab("Estadísticas", systemImage: "chart.bar.xaxis") {
                 StatsView()
             }
 
-            Tab("", systemImage: "person.crop.circle.fill") {
+            Tab("Perfil", systemImage: "person.crop.circle.fill") {
                 ProfileView()
             }
         }

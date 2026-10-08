@@ -46,41 +46,47 @@ struct ReportDetailsView: View {
                             .clipShape(Capsule())
                     }
                     
-                    Text("URL de reporte")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
+                    VStack(spacing: 10) {
+                        Text("URL de reporte")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                        
+                        Text(reporte.url)
+                            .foregroundColor(.black)
+                            .padding()
+                            .frame(maxWidth: 350, maxHeight: 30)
+                            .background(Color.white)
+                            .clipShape(Capsule())
+                    }
                     
-                    Text(reporte.url)
-                        .foregroundColor(.black)
-                        .padding()
-                        .frame(maxWidth: 350, maxHeight: 30)
-                        .background(Color.white)
-                        .clipShape(Capsule())
+                    VStack(spacing: 10) {
+                        Text("Descripción breve")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                        
+                        Text(reporte.descripcion)
+                            .foregroundColor(.black)
+                            .padding()
+                            .frame(maxWidth: 350, maxHeight: 150)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                    }
                     
-                    Text("Descripción breve")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
-                    
-                    Text(reporte.descripcion)
-                        .foregroundColor(.black)
-                        .padding()
-                        .frame(maxWidth: 350, maxHeight: 150)
-                        .background(Color.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                    
-                    Text("Categoría")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
-                    
-                    Text(reporte.categoria)
-                        .foregroundColor(.black)
-                        .padding()
-                        .frame(maxWidth: 350, maxHeight: 30)
-                        .background(Color.white)
-                        .clipShape(Capsule())
+                    VStack(spacing: 10) {
+                        Text("Categoría")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                        
+                        Text(reporte.categoria)
+                            .foregroundColor(.black)
+                            .padding()
+                            .frame(maxWidth: 350, maxHeight: 30)
+                            .background(Color.white)
+                            .clipShape(Capsule())
+                    }
                     
                     VStack(spacing: 10) {
                         Text("Evidencia")

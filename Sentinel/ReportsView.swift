@@ -118,7 +118,8 @@ struct ReportsView: View {
                                     categoriaSeleccionada = "Todos"
                                 }
                                 .foregroundColor(.black)
-                                .frame(maxHeight: 30)
+                                .fontWeight(.bold)
+                                .frame(maxHeight: 5)
                                 .scaledToFill()
                                 .padding()
                                 .background(categoriaSeleccionada == "Todos" ? Color.yellow : Color.white)
@@ -129,7 +130,8 @@ struct ReportsView: View {
                                     categoriaSeleccionada = "Circulación y Seguridad"
                                 }
                                 .foregroundColor(.black)
-                                .frame(maxHeight: 30)
+                                .fontWeight(.bold)
+                                .frame(maxHeight: 5)
                                 .scaledToFill()
                                 .padding()
                                 .background(categoriaSeleccionada == "Circulación y Seguridad" ? Color.yellow : Color.white)
@@ -140,7 +142,8 @@ struct ReportsView: View {
                                     categoriaSeleccionada = "Estacionamiento"
                                 }
                                 .foregroundColor(.black)
-                                .frame(maxHeight: 30)
+                                .fontWeight(.bold)
+                                .frame(maxHeight: 5)
                                 .scaledToFill()
                                 .padding()
                                 .background(categoriaSeleccionada == "Estacionamiento" ? Color.yellow : Color.white)
@@ -151,7 +154,8 @@ struct ReportsView: View {
                                     categoriaSeleccionada = "Administrativas"
                                 }
                                 .foregroundColor(.black)
-                                .frame(maxHeight: 30)
+                                .fontWeight(.bold)
+                                .frame(maxHeight: 5)
                                 .scaledToFill()
                                 .padding()
                                 .background(categoriaSeleccionada == "Administrativas" ? Color.yellow : Color.white)
@@ -162,7 +166,8 @@ struct ReportsView: View {
                                     categoriaSeleccionada = "Estado del vehículo"
                                 }
                                 .foregroundColor(.black)
-                                .frame(maxHeight: 30)
+                                .fontWeight(.bold)
+                                .frame(maxHeight: 5)
                                 .scaledToFill()
                                 .padding()
                                 .background(categoriaSeleccionada == "Estado del vehículo" ? Color.yellow : Color.white)

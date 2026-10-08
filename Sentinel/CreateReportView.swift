@@ -24,68 +24,77 @@ struct CreateReportView: View {
                 .ignoresSafeArea()
             
             ScrollView(.vertical) {
-                VStack(spacing: 10) {
-                    Text("Nuevo reporte")
-                        .font(.largeTitle)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
-                        .padding()
-                    
-                    Text("Título del reporte")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
-                    
-                    TextField("", text: $reporte.titulo)
-                        .padding()
-                        .frame(maxWidth: 350, maxHeight: 30)
-                        .background(Color.white)
-                        .clipShape(Capsule())
-                    
-                    Text("Información proporcionada")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
-                    
-                    TextField("", text: $reporte.url)
-                        .padding()
-                        .frame(maxWidth: 350, maxHeight: 30)
-                        .background(Color.white)
-                        .clipShape(Capsule())
-                    
-                    Text("Descripción breve")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
-                    
-                    TextField("", text: $reporte.descripcion)
-                        .padding()
-                        .frame(maxWidth: 350, maxHeight: 150)
-                        .background(Color.white)
-                    
-                    Text("Categoría")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
-                    
-                    Picker("Categoría", selection: $reporte.categoria) {
-                        Text("Administrativas")
-                            .tag("Administrativas")
-                        
-                        Text("Circulación y seguridad")
-                            .tag("Circulación y seguridad")
-                        
-                        Text("Estacionamiento")
-                            .tag("Estacionamiento")
-                        
-                        Text("Estado del vehículo")
-                            .tag("Estado del vehículo")
-                    }
-                    .pickerStyle(.menu)
+                Text("Nuevo reporte")
+                    .font(.largeTitle)
+                    .foregroundColor(.white)
+                    .fontWeight(.bold)
                     .padding()
-                    .frame(maxWidth: 350)
-                    .background(Color.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                
+                VStack(spacing: 20) {
+                    VStack(spacing: 10) {
+                        Text("Título del reporte")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                        
+                        TextField("", text: $reporte.titulo)
+                            .padding()
+                            .frame(maxWidth: 350, maxHeight: 30)
+                            .background(Color.white)
+                            .clipShape(Capsule())
+                    }
+                    
+                    VStack(spacing: 10) {
+                        Text("Información proporcionada")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                        
+                        TextField("", text: $reporte.url)
+                            .padding()
+                            .frame(maxWidth: 350, maxHeight: 30)
+                            .background(Color.white)
+                            .clipShape(Capsule())
+                    }
+                    
+                    VStack(spacing: 10) {
+                        Text("Descripción breve")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                        
+                        TextField("", text: $reporte.descripcion)
+                            .padding()
+                            .frame(maxWidth: 350, maxHeight: 150)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                    }
+                    
+                    VStack(spacing: 10) {
+                        Text("Categoría")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                        
+                        Picker("Categoría", selection: $reporte.categoria) {
+                            Text("Administrativas")
+                                .tag("Administrativas")
+                            
+                            Text("Circulación y seguridad")
+                                .tag("Circulación y seguridad")
+                            
+                            Text("Estacionamiento")
+                                .tag("Estacionamiento")
+                            
+                            Text("Estado del vehículo")
+                                .tag("Estado del vehículo")
+                        }
+                        .pickerStyle(.menu)
+                        .padding()
+                        .frame(maxWidth: 350)
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
                     
                     VStack(spacing: 10) {
                         Text("Evidencia")
