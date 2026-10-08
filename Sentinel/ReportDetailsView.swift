@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ReportDetailsView: View {
-    @State var reporte = Reporte()
+    let reporte: Reporte
     
     var body: some View {
         ZStack {
@@ -23,17 +23,36 @@ struct ReportDetailsView: View {
                         .fontWeight(.bold)
                         .padding()
                     
-                    Text("Estado de validación")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
+                    VStack(spacing: 5) {
+                        Text(reporte.titulo)
+                            .font(.title)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                            .multilineTextAlignment(.center)
+                    }
+                    
+                    HStack(spacing: 20) {
+                        Text("Estado de validación")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                        
+                        Text(textoEstado)
+                            .foregroundColor(.black)
+                            .fontWeight(.bold)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 8)
+                            .background(colorEstado)
+                            .clipShape(Capsule())
+                    }
                     
                     Text("URL de reporte")
                         .font(.title3)
                         .foregroundColor(.white)
                         .fontWeight(.bold)
                     
-                    TextField("", text: $reporte.url)
+                    Text(reporte.url)
+                        .foregroundColor(.black)
                         .padding()
                         .frame(maxWidth: 350, maxHeight: 30)
                         .background(Color.white)
@@ -44,33 +63,94 @@ struct ReportDetailsView: View {
                         .foregroundColor(.white)
                         .fontWeight(.bold)
                     
-                    TextField("", text: $reporte.descripcion)
+                    Text(reporte.descripcion)
+                        .foregroundColor(.black)
                         .padding()
                         .frame(maxWidth: 350, maxHeight: 150)
                         .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
                     
                     Text("Categoría")
                         .font(.title3)
                         .foregroundColor(.white)
                         .fontWeight(.bold)
                     
-                    TextField("", text: $reporte.categoria)
+                    Text(reporte.categoria)
+                        .foregroundColor(.black)
                         .padding()
                         .frame(maxWidth: 350, maxHeight: 30)
                         .background(Color.white)
                         .clipShape(Capsule())
                     
-                    Text("Evidencia")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
+                    VStack(spacing: 10) {
+                        Text("Evidencia")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
                     
+                        if reporte.evidencia.isEmpty {
+                            Text("No hay evidencia adjunta a este reporte")
+                                .foregroundColor(.white)
+                        } else {
+                            ScrollView(.horizontal) {
+                                HStack(spacing: 15) {
+                                    ForEach(reporte.evidencia.indices, id: \.self) {
+                                        index in
+                                        if let image = UIImage(data: reporte.evidencia[index]) {
+                                            Image(uiImage: image)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 180, height: 180)
+                                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                        }
+                    }
                 }
+                .padding(.bottom, 30)
+                .frame(maxWidth: 350)
             }
+        }
+    }
+    
+    private var textoEstado: String {
+        switch reporte.estadoValidacion {
+        case .enRevision:
+            return "En revisión"
+            
+        case .fraude:
+            return "Fraude"
+            
+        case .confiable:
+            return "Confiable"
+        }
+    }
+    
+    private var colorEstado: Color {
+        switch reporte.estadoValidacion {
+        case .enRevision:
+            return Color.yellow
+            
+        case .fraude:
+            return Color.red
+            
+        case .confiable:
+            return Color.green
         }
     }
 }
 
 #Preview {
-    ReportDetailsView()
+    ReportDetailsView(
+            reporte: Reporte(
+                titulo: "Infracción por exceso de velocidad",
+                url: "www.finammx.vip",
+                descripcion: "Descripción de prueba para visualizar el detalle del reporte.",
+                categoria: "Circulación y seguridad",
+                estadoValidacion: .fraude
+            )
+    )
 }

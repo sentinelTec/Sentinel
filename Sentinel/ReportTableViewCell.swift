@@ -76,5 +76,13 @@ struct ReportTableViewCell: View {
 }
 
 #Preview {
-    ReportTableViewCell()
+    ReportTableViewCell(
+        reporte: Reporte(
+            titulo: "Infracción por exceso de velocidad",
+            url: "www.finammx.vip",
+            descripcion: "Descripción de prueba",
+            categoria: "Circulación y seguridad",
+            estadoValidacion: .fraude
+        )
+    )
 }

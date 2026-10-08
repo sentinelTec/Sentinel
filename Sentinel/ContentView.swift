@@ -14,14 +14,6 @@ struct ContentView: View {
                 ReportsView()
             }
             
-            Tab("", systemImage: "chart.bar.horizontal.page") {
-                CreateReportView()
-            }
-
-            Tab("", systemImage: "chart.bar.horizontal.page") {
-                ReportDetailsView()
-            }
-            
             Tab("", systemImage: "chart.bar.xaxis") {
                 StatsView()
             }

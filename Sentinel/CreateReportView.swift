@@ -69,8 +69,8 @@ struct CreateReportView: View {
                         .fontWeight(.bold)
                     
                     Picker("Categoría", selection: $reporte.categoria) {
-                        Text("Administrativa")
-                            .tag("Administrativa")
+                        Text("Administrativas")
+                            .tag("Administrativas")
                         
                         Text("Circulación y seguridad")
                             .tag("Circulación y seguridad")
