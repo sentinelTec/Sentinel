@@ -45,12 +45,6 @@ struct RegistrationView: View {
                         .background(Color.white)
                         .clipShape(Capsule())
                     
-                    TextField("Número de teléfono", text: $usuario.numeroDeTelefono)
-                        .padding()
-                        .frame(maxWidth: 350)
-                        .background(Color.white)
-                        .clipShape(Capsule())
-                    
                     HStack(spacing: 15) {
                         Text("¿Ya tienes cuenta?")
                             .foregroundColor(.white)
