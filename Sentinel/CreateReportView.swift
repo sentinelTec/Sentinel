@@ -10,12 +10,12 @@ import PhotosUI
 
 struct CreateReportView: View {
     @State private var reporte = Reporte()
-    
     @Environment(\.dismiss) var dismiss
     @State private var imagenes: [UIImage] = []
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var mostrarCamara = false
     @State private var imagenTomada: UIImage?
+    @State private var erroresFormulario: [String] = []
     var onSave: (Reporte) -> Void
     
     var body: some View {
@@ -77,14 +77,14 @@ struct CreateReportView: View {
                             .fontWeight(.bold)
                         
                         Picker("Categoría", selection: $reporte.categoria) {
-                            Text("Administrativas")
-                                .tag("Administrativas")
-                            
                             Text("Circulación y seguridad")
                                 .tag("Circulación y seguridad")
                             
                             Text("Estacionamiento")
                                 .tag("Estacionamiento")
+                            
+                            Text("Administrativa")
+                                .tag("Administrativa")
                             
                             Text("Estado del vehículo")
                                 .tag("Estado del vehículo")
@@ -169,6 +169,12 @@ struct CreateReportView: View {
                     .background(Color.yellow)
                     .cornerRadius(10)
                     .clipShape(Capsule())
+                    if erroresFormulario.count > 0 {
+                        Errors(errores: erroresFormulario)
+                            .foregroundStyle(Color.white)
+                            .frame(maxWidth: 350)
+                            .multilineTextAlignment(.center)
+                    }
                 }
                 .padding(.bottom, 30)
             }
@@ -202,6 +208,12 @@ struct CreateReportView: View {
     }
         
     private func registrarReporte() {
+        erroresFormulario = reporte.validaDatos()
+
+        guard erroresFormulario.isEmpty else {
+            return
+        }
+        
         reporte.estadoValidacion = .enRevision
         
         reporte.evidencia = imagenes.compactMap {
