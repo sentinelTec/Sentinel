@@ -18,7 +18,7 @@ extension RegistrationView {
                 errores.append("Ingrese un correo")
             }
             if contrasena.esVacio {
-                errores.append("Ingrese una contrasena")
+                errores.append("Ingrese una contraseña")
             }
             if numeroDeTelefono.esVacio {
                 errores.append("Ingrese un número de teléfono")

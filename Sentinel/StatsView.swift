@@ -120,8 +120,6 @@ struct StatsView: View {
     }
 }
 
-    
-    
 struct BarraEstadistica: View {
     let cantidad: Double
     let maximo: Double

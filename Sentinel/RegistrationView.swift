@@ -18,7 +18,9 @@ struct RegistrationView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 15) {
-                    Image("Red")
+                    Image("Sentinel")
+                        .resizable()
+                        .frame(maxWidth: 250, maxHeight: 250)
                     
                     Text("Registro")
                         .font(.largeTitle)
