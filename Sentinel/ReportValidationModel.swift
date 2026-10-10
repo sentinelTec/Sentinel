@@ -22,3 +22,26 @@ struct Reporte: Identifiable {
     var estadoValidacion: EstadoValidacion = .enRevision
     var evidencia: [Data] = []
 }
+
+extension Reporte {
+    func validaDatos() -> [String] {
+        var errores: [String] = []
+        if titulo.esVacio {
+            errores.append("Ingrese un título para el reporte.")
+        }
+
+        if url.esVacio {
+            errores.append("Ingrese una url como información proporcionada.")
+        }
+
+        if descripcion.esVacio {
+            errores.append("Ingrese una descripción del caso que quiere reportar.")
+        }
+
+        if categoria.esVacio {
+            errores.append("Seleccione una categoría.")
+        }
+
+        return errores
+    }
+}

@@ -126,7 +126,7 @@ struct ReportsView: View {
                                 .cornerRadius(10)
                                 .clipShape(Capsule())
                                 
-                                Button("Circulación y seguridad") {
+                                Button("Circulación y Seguridad") {
                                     categoriaSeleccionada = "Circulación y Seguridad"
                                 }
                                 .foregroundColor(.black)
