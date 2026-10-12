@@ -11,25 +11,23 @@ struct ContentView: View {
     @Environment(SessionStore.self) private var session
 
     var body: some View {
-        if session.isLoggedIn {
-            TabView {
-                Tab("Reportes", systemImage: "chart.bar.horizontal.page") {
-                    ReportsView()
-                }
-
-                Tab("Estadísticas", systemImage: "chart.bar.xaxis") {
-                    StatsView()
-                }
-
-                Tab("Perfil", systemImage: "person.crop.circle.fill") {
-                    ProfileView()
-                }
+        TabView {
+            Tab("Reportes", systemImage: "chart.bar.horizontal.page") {
+                ReportsView()
             }
-            .task {
+
+            Tab("Estadísticas", systemImage: "chart.bar.xaxis") {
+                StatsView()
+            }
+
+            Tab("Perfil", systemImage: "person.crop.circle.fill") {
+                ProfileView()
+            }
+        }
+        .task(id: session.isLoggedIn) {
+            if session.isLoggedIn {
                 await session.loadProfile()
             }
-        } else {
-            LoginView()
         }
     }
 }

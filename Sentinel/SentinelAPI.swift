@@ -26,11 +26,11 @@ enum SentinelAPI {
     }
 
     static func categories() async throws -> [Category] {
-        try await client.request("GET", "categories")
+        try await client.request("GET", "public/categories", authenticated: false)
     }
 
     static func verifiedReports() async throws -> [ReportDTO] {
-        try await client.request("GET", "reports")
+        try await client.request("GET", "public/reports", authenticated: false)
     }
 
     static func myReports() async throws -> [ReportDTO] {

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ReportDetailsView: View {
+    @Environment(SessionStore.self) private var session
     let reporte: Reporte
     @State private var imagenesRemotas: [URL] = []
     @State private var cargandoEvidencia = false
@@ -153,7 +154,7 @@ struct ReportDetailsView: View {
     }
 
     private func cargarEvidencia() async {
-        guard let idServidor = reporte.idServidor else {
+        guard session.isLoggedIn, let idServidor = reporte.idServidor else {
             return
         }
         cargandoEvidencia = true
@@ -203,4 +204,5 @@ struct ReportDetailsView: View {
                 estadoValidacion: .fraude
             )
     )
+    .environment(SessionStore())
 }

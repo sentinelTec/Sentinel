@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ReportsView: View {
+    @Environment(SessionStore.self) private var session
     @State private var textoBusqueda = ""
     @State private var categoriaSeleccionada = "Todos"
     
@@ -51,9 +52,13 @@ struct ReportsView: View {
                                 .foregroundColor(.white)
                             
                             NavigationLink {
-                                CreateReportView { _ in
-                                    seccion = .mios
-                                    Task { await cargar() }
+                                if session.isLoggedIn {
+                                    CreateReportView { _ in
+                                        seccion = .mios
+                                        Task { await cargar() }
+                                    }
+                                } else {
+                                    LoginView()
                                 }
                             } label: {
                                 Label("", systemImage: "plus.square")
@@ -128,7 +133,28 @@ struct ReportsView: View {
                         }
                         .padding(.horizontal)
                         
-                        if cargando && reportes.isEmpty {
+                        if seccion == .mios && !session.isLoggedIn {
+                            VStack(spacing: 15) {
+                                Text("Inicia sesión para ver y crear tus reportes")
+                                    .foregroundColor(.white)
+                                    .font(.headline)
+                                    .multilineTextAlignment(.center)
+
+                                NavigationLink {
+                                    LoginView()
+                                } label: {
+                                    Text("Iniciar Sesión")
+                                        .foregroundColor(.white)
+                                        .fontWeight(.bold)
+                                        .padding()
+                                        .frame(maxWidth: 350)
+                                        .background(Color.yellow)
+                                        .cornerRadius(10)
+                                        .clipShape(Capsule())
+                                }
+                            }
+                            .padding()
+                        } else if cargando && reportes.isEmpty {
                             ProgressView()
                                 .tint(.white)
                                 .padding()
@@ -156,6 +182,9 @@ struct ReportsView: View {
             .onChange(of: seccion) {
                 Task { await cargar() }
             }
+            .onChange(of: session.isLoggedIn) {
+                Task { await cargar() }
+            }
         }
     }
 
@@ -165,10 +194,14 @@ struct ReportsView: View {
             if categorias.isEmpty {
                 categorias = try await SentinelAPI.categories()
             }
-            let respuesta = seccion == .verificados
-                ? try await SentinelAPI.verifiedReports()
-                : try await SentinelAPI.myReports()
-            reportes = respuesta.map(Reporte.init(dto:))
+            if seccion == .mios && !session.isLoggedIn {
+                reportes = []
+            } else {
+                let respuesta = seccion == .verificados
+                    ? try await SentinelAPI.verifiedReports()
+                    : try await SentinelAPI.myReports()
+                reportes = respuesta.map(Reporte.init(dto:))
+            }
             errores = []
         } catch {
             errores = [error.localizedDescription]

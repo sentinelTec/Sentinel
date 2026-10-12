@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LoginView: View {
     @Environment(SessionStore.self) private var session
+    @Environment(\.dismiss) private var dismiss
     @State var usuario = Usuario()
     @State var erroresFormulario: [String] = []
     @State private var enviando = false
@@ -96,6 +97,7 @@ struct LoginView: View {
                     email: usuario.correo.trimmingCharacters(in: .whitespaces),
                     password: usuario.contrasena
                 )
+                dismiss()
             } catch {
                 erroresFormulario = [error.localizedDescription]
             }

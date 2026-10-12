@@ -9,11 +9,49 @@ import SwiftUI
 import Charts
 
 struct StatsView: View {
+    @Environment(SessionStore.self) private var session
     @State private var total = 0
     @State private var porCategoria: [CategoryStats] = []
     @State private var errores: [String] = []
 
     var body: some View {
+        if session.isLoggedIn {
+            estadisticas
+        } else {
+            NavigationStack {
+                ZStack {
+                    Color.appColor
+                        .ignoresSafeArea()
+
+                    VStack(spacing: 15) {
+                        Text("Estadísticas")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+
+                        Text("Inicia sesión para ver las estadísticas")
+                            .foregroundColor(.white)
+                            .font(.headline)
+
+                        NavigationLink {
+                            LoginView()
+                        } label: {
+                            Text("Iniciar Sesión")
+                                .foregroundColor(.white)
+                                .fontWeight(.bold)
+                                .padding()
+                                .frame(maxWidth: 350)
+                                .background(Color.yellow)
+                                .cornerRadius(10)
+                                .clipShape(Capsule())
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private var estadisticas: some View {
         ZStack {
             Color.appColor
                 .ignoresSafeArea()
@@ -133,5 +171,6 @@ struct BarraEstadistica: View {
     
 #Preview {
     StatsView()
+        .environment(SessionStore())
 }
 
