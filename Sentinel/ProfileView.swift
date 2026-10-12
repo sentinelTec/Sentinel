@@ -18,35 +18,68 @@ struct ProfileView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 15) {
-                    Text("Mi cuenta")
-                        .font(.largeTitle)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
-
-                    if let profile = session.profile {
-                        Text(profile.name ?? "")
-                            .font(.title2)
-                            .foregroundColor(.white)
-                            .fontWeight(.semibold)
-
-                        Text(profile.email ?? "")
-                            .foregroundColor(.white)
-                    } else {
-                        ProgressView()
-                            .tint(.white)
-                    }
-
-                    Button {
-                        session.logout()
-                    } label: {
-                        Text("Cerrar sesión")
+                    if session.isLoggedIn {
+                        Text("Mi cuenta")
+                            .font(.largeTitle)
                             .foregroundColor(.white)
                             .fontWeight(.bold)
-                            .padding()
-                            .frame(maxWidth: 350)
-                            .background(Color.yellow)
-                            .cornerRadius(10)
-                            .clipShape(Capsule())
+
+                        if let profile = session.profile {
+                            Text(profile.name ?? "")
+                                .font(.title2)
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+
+                            Text(profile.email ?? "")
+                                .foregroundColor(.white)
+                        } else {
+                            ProgressView()
+                                .tint(.white)
+                        }
+
+                        Button {
+                            session.logout()
+                        } label: {
+                            Text("Cerrar sesión")
+                                .foregroundColor(.white)
+                                .fontWeight(.bold)
+                                .padding()
+                                .frame(maxWidth: 350)
+                                .background(Color.yellow)
+                                .cornerRadius(10)
+                                .clipShape(Capsule())
+                        }
+                    } else {
+                        Text("¿No tienes cuenta?")
+                            .font(.largeTitle)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+
+                        NavigationLink {
+                            LoginView()
+                        } label: {
+                            Text("Iniciar Sesión")
+                                .foregroundColor(.white)
+                                .fontWeight(.bold)
+                                .padding()
+                                .frame(maxWidth: 350)
+                                .background(Color.yellow)
+                                .cornerRadius(10)
+                                .clipShape(Capsule())
+                        }
+
+                        NavigationLink {
+                            RegistrationView()
+                        } label: {
+                            Text("Registrarse")
+                                .foregroundColor(.white)
+                                .fontWeight(.bold)
+                                .padding()
+                                .frame(maxWidth: 350)
+                                .background(Color.yellow)
+                                .cornerRadius(10)
+                                .clipShape(Capsule())
+                        }
                     }
                     
                     HStack(spacing: 15) {
