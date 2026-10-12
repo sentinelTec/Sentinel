@@ -56,10 +56,10 @@ enum SentinelAPI {
     }
 
     static func summaryStats() async throws -> SummaryStats {
-        try await client.request("GET", "stats/summary")
+        try await client.request("GET", "public/stats/summary", authenticated: false)
     }
 
     static func statsByCategory() async throws -> [CategoryStats] {
-        try await client.request("GET", "stats/by-category")
+        try await client.request("GET", "public/stats/by-category", authenticated: false)
     }
 }
