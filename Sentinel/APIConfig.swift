@@ -1,7 +1,7 @@
 import Foundation
 
 enum APIConfig {
-    static let defaultBaseURL = "http://localhost:3000"
+    static let defaultBaseURL = "http://172.16.64.2/api"
 
     static var baseURL: URL {
         let value = ProcessInfo.processInfo.environment["SENTINEL_API_URL"] ?? defaultBaseURL
