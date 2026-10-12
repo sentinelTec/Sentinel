@@ -16,6 +16,9 @@ struct CreateReportView: View {
     @State private var mostrarCamara = false
     @State private var imagenTomada: UIImage?
     @State private var erroresFormulario: [String] = []
+    @State private var categorias: [Category] = []
+    @State private var enviando = false
+    @State private var registrado = false
     var onSave: (Reporte) -> Void
     
     var body: some View {
@@ -51,6 +54,9 @@ struct CreateReportView: View {
                             .fontWeight(.bold)
                         
                         TextField("", text: $reporte.url)
+                            .keyboardType(.URL)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
                             .padding()
                             .frame(maxWidth: 350, maxHeight: 30)
                             .background(Color.white)
@@ -76,18 +82,33 @@ struct CreateReportView: View {
                             .foregroundColor(.white)
                             .fontWeight(.bold)
                         
-                        Picker("Categoría", selection: $reporte.categoria) {
-                            Text("Circulación y seguridad")
-                                .tag("Circulación y seguridad")
-                            
-                            Text("Estacionamiento")
-                                .tag("Estacionamiento")
-                            
-                            Text("Administrativa")
-                                .tag("Administrativa")
-                            
-                            Text("Estado del vehículo")
-                                .tag("Estado del vehículo")
+                        Picker("Categoría", selection: $reporte.categoriaId) {
+                            Text("Selecciona una categoría")
+                                .tag(Int?.none)
+
+                            ForEach(categorias) { categoria in
+                                Text(categoria.name)
+                                    .tag(Optional(categoria.id))
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .padding()
+                        .frame(maxWidth: 350)
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+
+                    VStack(spacing: 10) {
+                        Text("Tipo de caso")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+
+                        Picker("Tipo de caso", selection: $reporte.tipoCaso) {
+                            ForEach(TipoCaso.allCases, id: \.self) { tipo in
+                                Text(tipo.texto)
+                                    .tag(tipo)
+                            }
                         }
                         .pickerStyle(.menu)
                         .padding()
@@ -159,9 +180,16 @@ struct CreateReportView: View {
                         }
                     }
                     
-                    Button("Registrar Fraude") {
+                    Button {
                         registrarReporte()
+                    } label: {
+                        if enviando {
+                            ProgressView()
+                        } else {
+                            Text("Registrar Fraude")
+                        }
                     }
+                    .disabled(enviando || registrado)
                     .foregroundColor(.black)
                     .fontWeight(.bold)
                     .padding()
@@ -180,6 +208,10 @@ struct CreateReportView: View {
             }
         }
         
+        .task {
+            await cargarCategorias()
+        }
+
         .sheet(isPresented: $mostrarCamara) {
             ImagePicker(image: $imagenTomada, sourceType: .camera)
         }
@@ -207,24 +239,91 @@ struct CreateReportView: View {
         }
     }
         
+    private func cargarCategorias() async {
+        do {
+            categorias = try await SentinelAPI.categories()
+        } catch {
+            erroresFormulario = [error.localizedDescription]
+        }
+    }
+
     private func registrarReporte() {
         erroresFormulario = reporte.validaDatos()
 
-        guard erroresFormulario.isEmpty else {
+        guard erroresFormulario.isEmpty, let categoriaId = reporte.categoriaId else {
             return
         }
-        
-        reporte.estadoValidacion = .enRevision
-        
-        reporte.evidencia = imagenes.compactMap {
-            $0.jpegData(compressionQuality: 0.8)
+
+        enviando = true
+        Task {
+            do {
+                let creado = try await SentinelAPI.createReport(
+                    NewReport(
+                        categoryId: categoriaId,
+                        caseType: reporte.tipoCaso.rawValue,
+                        title: reporte.titulo.trimmingCharacters(in: .whitespacesAndNewlines),
+                        description: reporte.descripcion.trimmingCharacters(in: .whitespacesAndNewlines),
+                        evidenceUrl: urlNormalizada(reporte.url)
+                    )
+                )
+
+                var fallidas = 0
+                for imagen in imagenes {
+                    guard let jpeg = imagen.jpegParaSubir() else {
+                        fallidas += 1
+                        continue
+                    }
+                    do {
+                        _ = try await SentinelAPI.uploadImage(reportId: creado.id, jpeg: jpeg)
+                    } catch {
+                        fallidas += 1
+                    }
+                }
+
+                onSave(Reporte(dto: creado))
+                if fallidas > 0 {
+                    erroresFormulario = ["El reporte se registró, pero no se pudieron subir \(fallidas) imagen(es)."]
+                    registrado = true
+                    enviando = false
+                } else {
+                    dismiss()
+                }
+            } catch {
+                erroresFormulario = [error.localizedDescription]
+                enviando = false
+            }
         }
-        
-        onSave(reporte)
-        dismiss()
+    }
+
+    private func urlNormalizada(_ texto: String) -> String {
+        let limpio = texto.trimmingCharacters(in: .whitespacesAndNewlines)
+        if limpio.lowercased().hasPrefix("http://") || limpio.lowercased().hasPrefix("https://") {
+            return limpio
+        }
+        return "https://" + limpio
     }
 }
 
+
+extension UIImage {
+    func jpegParaSubir(maximoBytes: Int = 4_500_000, ladoMaximo: CGFloat = 2048) -> Data? {
+        let escala = min(1, ladoMaximo / max(size.width, size.height))
+        let nuevoTamano = CGSize(width: size.width * escala, height: size.height * escala)
+        let formato = UIGraphicsImageRendererFormat.default()
+        formato.scale = 1
+        let redimensionada = UIGraphicsImageRenderer(size: nuevoTamano, format: formato).image { _ in
+            draw(in: CGRect(origin: .zero, size: nuevoTamano))
+        }
+        var calidad: CGFloat = 0.8
+        while calidad >= 0.3 {
+            if let datos = redimensionada.jpegData(compressionQuality: calidad), datos.count <= maximoBytes {
+                return datos
+            }
+            calidad -= 0.1
+        }
+        return nil
+    }
+}
 
 #Preview {
     CreateReportView{ _ in

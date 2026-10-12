@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct RegistrationView: View {
+    @Environment(SessionStore.self) private var session
     @State var usuario = Usuario()
     @State var erroresFormulario: [String] = []
+    @State private var enviando = false
     
     var body: some View {
         NavigationStack {
@@ -34,6 +36,9 @@ struct RegistrationView: View {
                         .clipShape(Capsule())
                     
                     TextField("Correo", text: $usuario.correo)
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
                         .padding()
                         .frame(maxWidth: 350)
                         .background(Color.white)
@@ -57,9 +62,17 @@ struct RegistrationView: View {
                         }
                     }
                     
-                    Button("Registrarse") {
-                        erroresFormulario = usuario.validaDatos()
+                    Button {
+                        registrarse()
+                    } label: {
+                        if enviando {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Text("Registrarse")
+                        }
                     }
+                    .disabled(enviando)
                     .foregroundColor(.white)
                     .fontWeight(.bold)
                     .padding()
@@ -83,8 +96,29 @@ struct RegistrationView: View {
             }
         }
     }
+
+    private func registrarse() {
+        erroresFormulario = usuario.validaDatos()
+        guard erroresFormulario.isEmpty else {
+            return
+        }
+        enviando = true
+        Task {
+            do {
+                try await session.register(
+                    name: usuario.nombreDeUsuario.trimmingCharacters(in: .whitespaces),
+                    email: usuario.correo.trimmingCharacters(in: .whitespaces),
+                    password: usuario.contrasena
+                )
+            } catch {
+                erroresFormulario = [error.localizedDescription]
+            }
+            enviando = false
+        }
+    }
 }
 
 #Preview {
     RegistrationView()
+        .environment(SessionStore())
 }

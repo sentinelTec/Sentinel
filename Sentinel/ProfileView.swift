@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @Environment(SessionStore.self) private var session
     @State private var contactAlert = false
     
     var body: some View {
@@ -17,28 +18,28 @@ struct ProfileView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 15) {
-                    Text("¿No tienes cuenta?")
+                    Text("Mi cuenta")
                         .font(.largeTitle)
                         .foregroundColor(.white)
                         .fontWeight(.bold)
-                    
-                    NavigationLink {
-                        LoginView()
-                    } label: {
-                        Text("Iniciar Sesión")
+
+                    if let profile = session.profile {
+                        Text(profile.name ?? "")
+                            .font(.title2)
                             .foregroundColor(.white)
-                            .fontWeight(.bold)
-                            .padding()
-                            .frame(maxWidth: 350)
-                            .background(Color.yellow)
-                            .cornerRadius(10)
-                            .clipShape(Capsule())
+                            .fontWeight(.semibold)
+
+                        Text(profile.email ?? "")
+                            .foregroundColor(.white)
+                    } else {
+                        ProgressView()
+                            .tint(.white)
                     }
-                    
-                    NavigationLink {
-                        RegistrationView()
+
+                    Button {
+                        session.logout()
                     } label: {
-                        Text("Registrarse")
+                        Text("Cerrar sesión")
                             .foregroundColor(.white)
                             .fontWeight(.bold)
                             .padding()
@@ -72,4 +73,5 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView()
+        .environment(SessionStore())
 }

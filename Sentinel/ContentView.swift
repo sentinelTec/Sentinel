@@ -8,23 +8,33 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        TabView {
-            Tab("Reportes", systemImage: "chart.bar.horizontal.page") {
-                ReportsView()
-            }
-            
-            Tab("Estadísticas", systemImage: "chart.bar.xaxis") {
-                StatsView()
-            }
+    @Environment(SessionStore.self) private var session
 
-            Tab("Perfil", systemImage: "person.crop.circle.fill") {
-                ProfileView()
+    var body: some View {
+        if session.isLoggedIn {
+            TabView {
+                Tab("Reportes", systemImage: "chart.bar.horizontal.page") {
+                    ReportsView()
+                }
+
+                Tab("Estadísticas", systemImage: "chart.bar.xaxis") {
+                    StatsView()
+                }
+
+                Tab("Perfil", systemImage: "person.crop.circle.fill") {
+                    ProfileView()
+                }
             }
+            .task {
+                await session.loadProfile()
+            }
+        } else {
+            LoginView()
         }
     }
 }
 
 #Preview {
     ContentView()
+        .environment(SessionStore())
 }

@@ -11,56 +11,17 @@ struct ReportsView: View {
     @State private var textoBusqueda = ""
     @State private var categoriaSeleccionada = "Todos"
     
-    @State private var reportes: [Reporte] = [
-        Reporte(
-            titulo: "Infracción por exceso de velocidad",
-            url: "www.finammx.vip",
-            descripcion: "Reporte relacionado con una supuesta infracción de tránsito.",
-            categoria: "Circulación y Seguridad",
-            estadoValidacion: .fraude
-        ),
-        
-        Reporte(
-            titulo: "Estacionamiento prohibido",
-            url: "www.radar-gob.com/spd",
-            descripcion: "Reporte de un vehículo estacionado en una zona no permitida.",
-            categoria: "Estacionamiento",
-            estadoValidacion: .fraude
-        ),
-        
-        Reporte(
-            titulo: "Seguro expirado",
-            url: "www.vehiculos.mx",
-            descripcion: "Reporte relacionado con la documentación del vehículo.",
-            categoria: "Administrativas",
-            estadoValidacion: .enRevision
-        ),
-        
-        Reporte(
-            titulo: "Tránsitos impagos",
-            url: "https://bienk.lol.mx",
-            descripcion: "Reporte de falta de pagos de multas de tránsito.",
-            categoria: "Circulación y Seguridad",
-            estadoValidacion: .confiable
-        ),
-        
-        Reporte(
-            titulo: "Irregularidad física",
-            url: "www.infraccion-express.com/park",
-            descripcion: "Reporte relacionado con irregularidad física del vehículo.",
-            categoria: "Estado del vehículo",
-            estadoValidacion: .enRevision
-        ),
-        
-        Reporte(
-            titulo: "Falta del cinturón de seguridad",
-            url: "www.infraccion-express.com",
-            descripcion: "Reporte de falta de cinturón de seguridad durante manejo.",
-            categoria: "Circulación y Seguridad",
-            estadoValidacion: .fraude
-        )
-    ]
-    
+    @State private var reportes: [Reporte] = []
+    @State private var categorias: [Category] = []
+    @State private var seccion: Seccion = .verificados
+    @State private var cargando = false
+    @State private var errores: [String] = []
+
+    enum Seccion: String, CaseIterable {
+        case verificados = "Verificados"
+        case mios = "Mis reportes"
+    }
+
     var reportesFiltrados: [Reporte] {
         reportes.filter {
             reporte in
@@ -90,8 +51,9 @@ struct ReportsView: View {
                                 .foregroundColor(.white)
                             
                             NavigationLink {
-                                CreateReportView { nuevoReporte in
-                                    reportes.append(nuevoReporte)
+                                CreateReportView { _ in
+                                    seccion = .mios
+                                    Task { await cargar() }
                                 }
                             } label: {
                                 Label("", systemImage: "plus.square")
@@ -101,7 +63,17 @@ struct ReportsView: View {
                             }
                         }
                         .padding(.horizontal)
-                        
+
+                        Picker("Sección", selection: $seccion) {
+                            ForEach(Seccion.allCases, id: \.self) { opcion in
+                                Text(opcion.rawValue).tag(opcion)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .background(Color.white.opacity(0.8))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .padding(.horizontal)
+
                         HStack {
                             Image(systemName: "magnifyingglass")
                                 .foregroundColor(.gray)
@@ -126,53 +98,19 @@ struct ReportsView: View {
                                 .cornerRadius(10)
                                 .clipShape(Capsule())
                                 
-                                Button("Circulación y Seguridad") {
-                                    categoriaSeleccionada = "Circulación y Seguridad"
+                                ForEach(categorias) { categoria in
+                                    Button(categoria.name) {
+                                        categoriaSeleccionada = categoria.name
+                                    }
+                                    .foregroundColor(.black)
+                                    .fontWeight(.bold)
+                                    .frame(maxHeight: 5)
+                                    .scaledToFill()
+                                    .padding()
+                                    .background(categoriaSeleccionada == categoria.name ? Color.yellow : Color.white)
+                                    .cornerRadius(10)
+                                    .clipShape(Capsule())
                                 }
-                                .foregroundColor(.black)
-                                .fontWeight(.bold)
-                                .frame(maxHeight: 5)
-                                .scaledToFill()
-                                .padding()
-                                .background(categoriaSeleccionada == "Circulación y Seguridad" ? Color.yellow : Color.white)
-                                .cornerRadius(10)
-                                .clipShape(Capsule())
-                                
-                                Button("Estacionamiento") {
-                                    categoriaSeleccionada = "Estacionamiento"
-                                }
-                                .foregroundColor(.black)
-                                .fontWeight(.bold)
-                                .frame(maxHeight: 5)
-                                .scaledToFill()
-                                .padding()
-                                .background(categoriaSeleccionada == "Estacionamiento" ? Color.yellow : Color.white)
-                                .cornerRadius(10)
-                                .clipShape(Capsule())
-                                
-                                Button("Administrativas") {
-                                    categoriaSeleccionada = "Administrativas"
-                                }
-                                .foregroundColor(.black)
-                                .fontWeight(.bold)
-                                .frame(maxHeight: 5)
-                                .scaledToFill()
-                                .padding()
-                                .background(categoriaSeleccionada == "Administrativas" ? Color.yellow : Color.white)
-                                .cornerRadius(10)
-                                .clipShape(Capsule())
-                                
-                                Button("Estado del vehículo") {
-                                    categoriaSeleccionada = "Estado del vehículo"
-                                }
-                                .foregroundColor(.black)
-                                .fontWeight(.bold)
-                                .frame(maxHeight: 5)
-                                .scaledToFill()
-                                .padding()
-                                .background(categoriaSeleccionada == "Estado del vehículo" ? Color.yellow : Color.white)
-                                .cornerRadius(10)
-                                .clipShape(Capsule())
                             }
                             .padding(.horizontal)
                         }
@@ -190,7 +128,16 @@ struct ReportsView: View {
                         }
                         .padding(.horizontal)
                         
-                        if reportesFiltrados.isEmpty {
+                        if cargando && reportes.isEmpty {
+                            ProgressView()
+                                .tint(.white)
+                                .padding()
+                        } else if !errores.isEmpty {
+                            Errors(errores: errores)
+                                .foregroundStyle(Color.white)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                        } else if reportesFiltrados.isEmpty {
                             Text("No se encontraron reportes")
                                 .foregroundColor(.white)
                                 .font(.headline)
@@ -199,11 +146,38 @@ struct ReportsView: View {
                     }
                     .frame(maxWidth: 350)
                 }
+                .refreshable {
+                    await cargar()
+                }
+            }
+            .task {
+                await cargar()
+            }
+            .onChange(of: seccion) {
+                Task { await cargar() }
             }
         }
+    }
+
+    private func cargar() async {
+        cargando = true
+        do {
+            if categorias.isEmpty {
+                categorias = try await SentinelAPI.categories()
+            }
+            let respuesta = seccion == .verificados
+                ? try await SentinelAPI.verifiedReports()
+                : try await SentinelAPI.myReports()
+            reportes = respuesta.map(Reporte.init(dto:))
+            errores = []
+        } catch {
+            errores = [error.localizedDescription]
+        }
+        cargando = false
     }
 }
 
 #Preview {
     ReportsView()
+        .environment(SessionStore())
 }

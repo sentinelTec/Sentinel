@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ReportDetailsView: View {
     let reporte: Reporte
+    @State private var imagenesRemotas: [URL] = []
+    @State private var cargandoEvidencia = false
     
     var body: some View {
         ZStack {
@@ -46,6 +48,10 @@ struct ReportDetailsView: View {
                             .clipShape(Capsule())
                     }
                     
+                    Text(reporte.tipoCaso.texto)
+                        .foregroundColor(.white)
+                        .italic()
+
                     VStack(spacing: 10) {
                         Text("URL de reporte")
                             .font(.title3)
@@ -94,7 +100,28 @@ struct ReportDetailsView: View {
                             .foregroundColor(.white)
                             .fontWeight(.bold)
                     
-                        if reporte.evidencia.isEmpty {
+                        if cargandoEvidencia {
+                            ProgressView()
+                                .tint(.white)
+                        } else if !imagenesRemotas.isEmpty {
+                            ScrollView(.horizontal) {
+                                HStack(spacing: 15) {
+                                    ForEach(imagenesRemotas, id: \.self) { url in
+                                        AsyncImage(url: url) { imagen in
+                                            imagen
+                                                .resizable()
+                                                .scaledToFill()
+                                        } placeholder: {
+                                            ProgressView()
+                                        }
+                                        .frame(width: 180, height: 180)
+                                        .background(Color.white.opacity(0.2))
+                                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                        } else if reporte.evidencia.isEmpty {
                             Text("No hay evidencia adjunta a este reporte")
                                 .foregroundColor(.white)
                         } else {
@@ -120,6 +147,23 @@ struct ReportDetailsView: View {
                 .frame(maxWidth: 350)
             }
         }
+        .task {
+            await cargarEvidencia()
+        }
+    }
+
+    private func cargarEvidencia() async {
+        guard let idServidor = reporte.idServidor else {
+            return
+        }
+        cargandoEvidencia = true
+        if let evidencias = try? await SentinelAPI.evidence(reportId: idServidor) {
+            imagenesRemotas = evidencias
+                .filter { $0.type == "image" }
+                .compactMap { $0.url }
+                .compactMap { APIConfig.url($0) }
+        }
+        cargandoEvidencia = false
     }
     
     private var textoEstado: String {
