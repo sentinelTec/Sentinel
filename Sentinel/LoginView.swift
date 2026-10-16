@@ -93,7 +93,7 @@ struct LoginView: View {
                     Button("Volver al menú") {
                         dismiss()
                     }
-                    .foregroundColor(.red)
+                    .foregroundColor(.white)
                     .fontWeight(.bold)
                 }
             }
