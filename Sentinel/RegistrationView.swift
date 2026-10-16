@@ -63,7 +63,7 @@ struct RegistrationView: View {
                         .foregroundStyle(Color.white)
                         .padding()
                         .frame(maxWidth: 350)
-                        .background(Color.white)
+                        .background(Color.red)
                         .clipShape(Capsule())
                     
                     HStack(spacing: 15) {
