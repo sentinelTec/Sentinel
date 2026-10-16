@@ -9,144 +9,183 @@ import SwiftUI
 import Charts
 
 struct StatsView: View {
-    let datos = [
-        ("Admin", 0.1),
-        ("Vehículo", 0.3),
-        ("CyS", 0.5),
-        ("Est.", 0.1)
-    ]
+    @EnvironmentObject private var session: SessionManager
+    @State private var resumen: StatsSummaryDTO?
+    @State private var categorias: [CategoryStatDTO] = []
+    @State private var meses: [MonthlyStatDTO] = []
+    @State private var cargando = false
+    @State private var errorMensaje: String?
+
+    private var mesesOrdenados: [MonthlyStatDTO] {
+        meses.sorted { $0.month < $1.month }
+    }
     
     var body: some View {
-        ZStack {
-            Color.appColor
-                .ignoresSafeArea()
+        NavigationStack {
+            ZStack {
+                Color.appColor
+                    .ignoresSafeArea()
+                
+                ScrollView(.vertical) {
+                    VStack(spacing: 20) {
+                        Text("Estadísticas")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        
+                        if cargando {
+                            ProgressView("Cargando estadísticas...")
+                                .tint(.white)
+                                .foregroundColor(.white)
+                        } else {
+                            if let resumen {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text("Resumen general")
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.black)
+                                    
+                                    datoResumen("Total de reportes", valor: resumen.totalReports)
+                                    
+                                    datoResumen("En revisión", valor: resumen.pendingReports)
+                                    
+                                    datoResumen("Aprobados", valor: resumen.approvedReports)
+                                    
+                                    datoResumen("Rechazados", valor: resumen.rejectedReports)
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                            }
+                            
+                            VStack(spacing: 12) {
+                                Text("Reportes por mes")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                                
+                                if mesesOrdenados.isEmpty {
+                                    Text("No hay estadísticas mensuales disponibles.")
+                                        .foregroundColor(.white)
+                                } else {
+                                    Chart(mesesOrdenados) { item in
+                                        BarMark(
+                                            x: .value("Mes", item.month),
+                                            y: .value("Reportes", item.total)
+                                        )
+                                        .foregroundStyle(Color.yellow)
+                                    }
+                                    .frame(height: 230)
+                                    .chartYAxis {
+                                        AxisMarks(position: .leading)
+                                    }
+                                    .padding()
+                                    .background(Color.white)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                }
+                            }
+                            
+                            VStack(spacing: 12) {
+                                Text("Reportes por categoría")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                                
+                                ForEach(categorias) { categoria in
+                                    HStack {
+                                        Text(categoria.categoryName)
+                                            .foregroundColor(.black)
+                                            .fontWeight(.bold)
+                                        
+                                        Spacer()
+                                        
+                                        Text("\(categoria.total)")
+                                            .foregroundColor(.white)
+                                            .fontWeight(.bold)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(Color.yellow)
+                                            .clipShape(Capsule())
+                                    }
+                                    .padding()
+                                    .background(Color.white)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                }
+                            }
+                            
+                            if let errorMensaje {
+                                Text(errorMensaje)
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
+                            }
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: 350)
+                }
+            }
             
-            VStack(spacing: 20) {
-                Text("Estadísticas")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                
-                Text("Reportes por categoría")
-                    .font(.title2)
-                    .foregroundColor(.white)
-                
-                HStack(spacing: 30) {
-                    Text("Todas")
-                        .foregroundColor(.white)
-                    
-                    Text("6")
-                        .foregroundColor(.white)
+            .task {
+                await cargarEstadisticas()
+            }
+            
+            .onChange(of: session.isAuthenticated) { _, _ in
+                Task {
+                    await cargarEstadisticas()
                 }
-                
-                BarraEstadistica(
-                    cantidad: 100,
-                    maximo: 100
-                )
-                .padding(.horizontal)
-                
-                HStack(spacing: 30) {
-                    Text("Circulación y seguridad")
-                        .foregroundColor(.white)
-                    
-                    Text("3")
-                        .foregroundColor(.white)
-                }
-                
-                BarraEstadistica(
-                    cantidad: 50,
-                    maximo: 100
-                )
-                .padding(.horizontal)
-                
-                HStack(spacing: 30) {
-                    Text("Estacionamiento")
-                        .foregroundColor(.white)
-                    
-                    Text("1")
-                        .foregroundColor(.white)
-                }
-                
-                BarraEstadistica(
-                    cantidad: 10,
-                    maximo: 100
-                )
-                .padding(.horizontal)
-                
-                HStack(spacing: 30) {
-                    Text("Administrativas")
-                        .foregroundColor(.white)
-                    
-                    Text("1")
-                        .foregroundColor(.white)
-                }
-                
-                BarraEstadistica(
-                    cantidad: 10,
-                    maximo: 100
-                )
-                .padding(.horizontal)
-                
-                HStack(spacing: 30) {
-                    Text("Estados de vehículo")
-                        .foregroundColor(.white)
-                    
-                    Text("1")
-                        .foregroundColor(.white)
-                }
-                
-                BarraEstadistica(
-                    cantidad: 10,
-                    maximo: 100
-                )
-                .padding(.horizontal)
-                
-                Text("Esta pantalla muestra la cantidad de reportes que se han levantado en un lapso de una semana por categoría")
-                    .foregroundColor(.white)
-                    .frame(maxWidth: 375)
-                    .multilineTextAlignment(.center)
-                
-                Chart(datos, id: \.0) { dato in
-                    SectorMark(
-                        angle: .value("Cantidad", dato.1),
-                        angularInset: 1
-                    )
-                }
-                .frame(height: 120)
-                .padding()
-                .foregroundStyle(.yellow)
             }
         }
     }
-}
+    
+    private func datoResumen(
+        _ titulo: String,
+        valor: Int
+    ) -> some View {
+        HStack {
+            Text(titulo)
+                .foregroundColor(.black)
 
-struct BarraEstadistica: View {
-    let cantidad: Double
-    let maximo: Double
+            Spacer()
 
-    var porcentaje: Double {
-        min(max(cantidad / maximo, 0), 1)
+            Text("\(valor)")
+                .foregroundColor(.white)
+                .fontWeight(.bold)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.yellow)
+                .clipShape(Capsule())
+        }
     }
 
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .leading) {
+    @MainActor
+    private func cargarEstadisticas() async {
+        cargando = true
+        errorMensaje = nil
+        defer { cargando = false }
 
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(red: 252/255, green: 225/255, blue: 125/255))
+        do {
+            async let nuevoResumen = session.fetchSummary()
+            async let nuevasCategorias = session.fetchCategoryStats()
+            async let nuevosMeses = session.fetchMonthlyStats()
 
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(red: 255/255, green: 195/255, blue: 0/255))
-                    .frame(
-                        width: geometry.size.width * porcentaje
-                    )
-            }
+            let resultados = try await (
+                nuevoResumen,
+                nuevasCategorias,
+                nuevosMeses
+            )
+
+            resumen = resultados.0
+            categorias = resultados.1
+            meses = resultados.2
+        } catch {
+            errorMensaje =
+                "No se pudieron cargar las estadísticas: \(error.localizedDescription)"
         }
-        .frame(height: 16)
     }
 }
     
 #Preview {
     StatsView()
+        .environmentObject(SessionManager())
 }
-

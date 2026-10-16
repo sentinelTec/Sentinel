@@ -1,15 +1,19 @@
 import SwiftUI
 
 struct LoginView: View {
+    @EnvironmentObject private var session: SessionManager
+    @Environment(\.dismiss) private var dismiss
     @State var usuario = Usuario()
     @State var erroresFormulario: [String] = []
+    @State private var cargando = false
+    var onLoginSuccess: (() -> Void)? = nil
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.appColor
-                    .ignoresSafeArea()
+        ZStack {
+            Color.appColor
+                .ignoresSafeArea()
                 
+            ScrollView(.vertical) {
                 VStack(spacing: 15) {
                     Image("Sentinel")
                         .resizable()
@@ -21,6 +25,9 @@ struct LoginView: View {
                         .fontWeight(.bold)
                     
                     TextField("Correo", text: $usuario.correo)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.emailAddress)
+                        .autocorrectionDisabled()
                         .padding()
                         .frame(maxWidth: 350)
                         .background(Color.white)
@@ -44,16 +51,28 @@ struct LoginView: View {
                         }
                     }
                     
-                    Button("Iniciar Sesión") {
-                        erroresFormulario = usuario.validaDatos()
+                    Button {
+                        Task {
+                            await iniciarSesion()
+                        }
+                    } label: {
+                        Group {
+                            if cargando {
+                                ProgressView()
+                                    .tint(.black)
+                            } else {
+                                Text("Iniciar Sesión")
+                            }
+                        }
+                        .foregroundColor(.white)
+                        .fontWeight(.bold)
+                        .padding()
+                        .frame(maxWidth: 350)
+                        .background(Color.yellow)
+                        .cornerRadius(10)
+                        .clipShape(Capsule())
                     }
-                    .foregroundColor(.white)
-                    .fontWeight(.bold)
-                    .padding()
-                    .frame(maxWidth: 350)
-                    .background(Color.yellow)
-                    .cornerRadius(10)
-                    .clipShape(Capsule())
+                    .disabled(cargando)
                     if erroresFormulario.count > 0 {
                         Errors(errores: erroresFormulario)
                             .foregroundStyle(Color.white)
@@ -62,7 +81,7 @@ struct LoginView: View {
                     }
                     
                     Button("Volver al menú") {
-                        
+                        dismiss()
                     }
                     .foregroundColor(.white)
                     .fontWeight(.bold)
@@ -70,9 +89,41 @@ struct LoginView: View {
             }
         }
     }
+    
+    @MainActor
+    private func iniciarSesion() async {
+        erroresFormulario = usuario.validaDatos()
+        
+        guard erroresFormulario.isEmpty else {
+            return
+        }
+            
+        cargando = true
+        defer { cargando = false }
+            
+        do {
+            try await session.login(
+                email: usuario.correo.trimmingCharacters(in: .whitespacesAndNewlines),
+                password: usuario.contrasena
+            )
+                
+            if let onLoginSuccess {
+                onLoginSuccess()
+            } else {
+                dismiss()
+            }
+        } catch {
+            erroresFormulario = [
+                "No se pudo iniciar sesión. Verifica tus credenciales y la conexión con el servidor.",
+                error.localizedDescription
+            ]
+        }
+    }
 }
 
-
 #Preview {
-    LoginView()
+    NavigationStack {
+        LoginView()
+    }
+    .environmentObject(SessionManager())
 }

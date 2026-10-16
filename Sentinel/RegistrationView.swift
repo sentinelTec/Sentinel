@@ -8,15 +8,18 @@
 import SwiftUI
 
 struct RegistrationView: View {
+    @EnvironmentObject private var session: SessionManager
     @State var usuario = Usuario()
     @State var erroresFormulario: [String] = []
+    @State private var cargando = false
+    @State private var mostrarLogin = false
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.appColor
-                    .ignoresSafeArea()
-                
+        ZStack {
+            Color.appColor
+                .ignoresSafeArea()
+            
+            ScrollView(.vertical) {
                 VStack(spacing: 15) {
                     Image("Sentinel")
                         .resizable()
@@ -34,6 +37,9 @@ struct RegistrationView: View {
                         .clipShape(Capsule())
                     
                     TextField("Correo", text: $usuario.correo)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.emailAddress)
+                        .autocorrectionDisabled()
                         .padding()
                         .frame(maxWidth: 350)
                         .background(Color.white)
@@ -57,16 +63,28 @@ struct RegistrationView: View {
                         }
                     }
                     
-                    Button("Registrarse") {
-                        erroresFormulario = usuario.validaDatos()
+                    Button {
+                        Task {
+                            await registrarUsuario()
+                        }
+                    } label: {
+                        Group {
+                            if cargando {
+                                ProgressView()
+                                    .tint(.black)
+                            } else {
+                                Text("Registrarse")
+                            }
+                        }
+                        .foregroundColor(.white)
+                        .fontWeight(.bold)
+                        .padding()
+                        .frame(maxWidth: 350)
+                        .background(Color.yellow)
+                        .cornerRadius(10)
+                        .clipShape(Capsule())
                     }
-                    .foregroundColor(.white)
-                    .fontWeight(.bold)
-                    .padding()
-                    .frame(maxWidth: 350)
-                    .background(Color.yellow)
-                    .cornerRadius(10)
-                    .clipShape(Capsule())
+                    .disabled(cargando)
                     if erroresFormulario.count > 0 {
                         Errors(errores: erroresFormulario)
                             .foregroundStyle(Color.white)
@@ -82,9 +100,42 @@ struct RegistrationView: View {
                 }
             }
         }
+        .navigationDestination(isPresented: $mostrarLogin) {
+            LoginView()
+        }
+    }
+    
+    @MainActor
+    private func registrarUsuario() async {
+        erroresFormulario = usuario.validaDatos()
+
+        guard erroresFormulario.isEmpty else {
+            return
+        }
+
+        cargando = true
+        defer { cargando = false }
+
+        do {
+            _ = try await session.register(
+                name: usuario.nombreDeUsuario.trimmingCharacters(in: .whitespacesAndNewlines),
+                email: usuario.correo.trimmingCharacters(in: .whitespacesAndNewlines),
+                password: usuario.contrasena
+            )
+
+            mostrarLogin = true
+        } catch {
+            erroresFormulario = [
+                "No se pudo completar el registro.",
+                error.localizedDescription
+            ]
+        }
     }
 }
 
 #Preview {
-    RegistrationView()
+    NavigationStack {
+        RegistrationView()
+    }
+    .environmentObject(SessionManager())
 }

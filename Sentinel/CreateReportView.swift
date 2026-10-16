@@ -16,7 +16,8 @@ struct CreateReportView: View {
     @State private var mostrarCamara = false
     @State private var imagenTomada: UIImage?
     @State private var erroresFormulario: [String] = []
-    var onSave: (Reporte) -> Void
+    @State private var guardando = false
+    var onSave: (Reporte) async throws -> Void
     
     var body: some View {
         ZStack {
@@ -159,16 +160,28 @@ struct CreateReportView: View {
                         }
                     }
                     
-                    Button("Registrar Fraude") {
-                        registrarReporte()
+                    Button {
+                        Task {
+                            await registrarReporte()
+                        }
+                    } label: {
+                        HStack {
+                            if guardando {
+                                ProgressView()
+                                    .tint(.black)
+                            }
+
+                            Text(guardando ? "Guardando..." : "Registrar reporte")
+                                .foregroundColor(.white)
+                                .fontWeight(.bold)
+                        }
+                        .padding()
+                        .scaledToFit()
+                        .background(Color.yellow)
+                        .cornerRadius(10)
+                        .clipShape(Capsule())
                     }
-                    .foregroundColor(.black)
-                    .fontWeight(.bold)
-                    .padding()
-                    .scaledToFit()
-                    .background(Color.yellow)
-                    .cornerRadius(10)
-                    .clipShape(Capsule())
+                    .disabled(guardando)
                     if erroresFormulario.count > 0 {
                         Errors(errores: erroresFormulario)
                             .foregroundStyle(Color.white)
@@ -206,13 +219,17 @@ struct CreateReportView: View {
             }
         }
     }
-        
-    private func registrarReporte() {
+       
+    @MainActor
+    private func registrarReporte() async {
         erroresFormulario = reporte.validaDatos()
 
         guard erroresFormulario.isEmpty else {
             return
         }
+        
+        guardando = true
+        defer { guardando = false }
         
         reporte.estadoValidacion = .enRevision
         
@@ -220,8 +237,15 @@ struct CreateReportView: View {
             $0.jpegData(compressionQuality: 0.8)
         }
         
-        onSave(reporte)
-        dismiss()
+        do {
+            try await onSave(reporte)
+            dismiss()
+        } catch {
+            erroresFormulario = [
+                "No se pudo crear el reporte.",
+                error.localizedDescription
+            ]
+        }
     }
 }
 
@@ -229,4 +253,5 @@ struct CreateReportView: View {
 #Preview {
     CreateReportView{ _ in
     }
+    .environmentObject(SessionManager())
 }

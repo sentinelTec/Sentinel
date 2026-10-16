@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct SentinelApp: App {
+    @StateObject private var session = SessionManager()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(session)
+                .task {
+                    await session.restoreSession()
+                }
         }
     }
 }
