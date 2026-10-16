@@ -67,7 +67,7 @@ struct ReportTableViewCell: View {
             return Color.yellow
                 
         case .fraude:
-            return Color.red
+            return Color(red: 224/255, green: 27/255, blue: 16/255)
                 
         case .confiable:
             return Color.green

@@ -21,32 +21,42 @@ struct LoginView: View {
                     
                     Text("Iniciar Sesión")
                         .font(.largeTitle)
-                        .foregroundColor(.white)
+                        .foregroundColor(.red)
                         .fontWeight(.bold)
                     
-                    TextField("Correo", text: $usuario.correo)
+                    TextField("", text: $usuario.correo,
+                        prompt: Text("Correo")
+                            .foregroundColor(.white)
+                            .italic()
+                        )
                         .textInputAutocapitalization(.never)
                         .keyboardType(.emailAddress)
                         .autocorrectionDisabled()
+                        .foregroundStyle(Color.white)
                         .padding()
                         .frame(maxWidth: 350)
-                        .background(Color.white)
+                        .background(Color.red)
                         .clipShape(Capsule())
                     
-                    SecureField("Contraseña", text: $usuario.contrasena)
+                    SecureField("", text: $usuario.contrasena,
+                        prompt: Text("Contraseña")
+                            .foregroundColor(.white)
+                            .italic()
+                        )
+                        .foregroundStyle(Color.white)
                         .padding()
                         .frame(maxWidth: 350)
-                        .background(Color.white)
+                        .background(Color.red)
                         .clipShape(Capsule())
                     
                     HStack(spacing: 15) {
                         Text("¿Aún no tienes cuenta?")
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(red: 194/255, green: 194/255, blue: 194/255))
                         NavigationLink {
                             RegistrationView()
                         } label: {
                             Text("Registrate")
-                                .foregroundColor(Color(red: 51/255, green: 190/255, blue: 255/255))
+                                .foregroundColor(Color.red)
                                 .italic()
                         }
                     }
@@ -59,7 +69,7 @@ struct LoginView: View {
                         Group {
                             if cargando {
                                 ProgressView()
-                                    .tint(.black)
+                                    .tint(.white)
                             } else {
                                 Text("Iniciar Sesión")
                             }
@@ -68,7 +78,7 @@ struct LoginView: View {
                         .fontWeight(.bold)
                         .padding()
                         .frame(maxWidth: 350)
-                        .background(Color.yellow)
+                        .background(Color.red)
                         .cornerRadius(10)
                         .clipShape(Capsule())
                     }
@@ -83,7 +93,7 @@ struct LoginView: View {
                     Button("Volver al menú") {
                         dismiss()
                     }
-                    .foregroundColor(.white)
+                    .foregroundColor(.red)
                     .fontWeight(.bold)
                 }
             }

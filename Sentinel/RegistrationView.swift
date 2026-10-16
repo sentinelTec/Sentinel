@@ -28,24 +28,39 @@ struct RegistrationView: View {
                     Text("Registro")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.red)
                     
-                    TextField("Nombre de Usuario", text: $usuario.nombreDeUsuario)
+                    TextField("", text: $usuario.nombreDeUsuario,
+                        prompt: Text("Ingresa tu usuario")
+                            .foregroundColor(.white)
+                            .italic()
+                        )
+                        .foregroundStyle(Color.white)
                         .padding()
                         .frame(maxWidth: 350)
-                        .background(Color.white)
+                        .background(Color.red)
                         .clipShape(Capsule())
                     
-                    TextField("Correo", text: $usuario.correo)
+                    TextField("", text: $usuario.correo,
+                        prompt: Text("Correo")
+                            .foregroundColor(.white)
+                            .italic()
+                        )
                         .textInputAutocapitalization(.never)
                         .keyboardType(.emailAddress)
                         .autocorrectionDisabled()
+                        .foregroundStyle(Color.white)
                         .padding()
                         .frame(maxWidth: 350)
-                        .background(Color.white)
+                        .background(Color.red)
                         .clipShape(Capsule())
                     
-                    SecureField("Contraseña", text: $usuario.contrasena)
+                    SecureField("", text: $usuario.contrasena,
+                        prompt: Text("Contraseña")
+                            .foregroundColor(.white)
+                            .italic()
+                        )
+                        .foregroundStyle(Color.white)
                         .padding()
                         .frame(maxWidth: 350)
                         .background(Color.white)
@@ -53,12 +68,12 @@ struct RegistrationView: View {
                     
                     HStack(spacing: 15) {
                         Text("¿Ya tienes cuenta?")
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(red: 194/255, green: 194/255, blue: 194/255))
                         NavigationLink {
                             LoginView()
                         } label: {
                             Text("Inicia Sesión")
-                                .foregroundColor(Color(red: 51/255, green: 190/255, blue: 255/255))
+                                .foregroundColor(Color.red)
                                 .italic()
                         }
                     }
@@ -71,7 +86,7 @@ struct RegistrationView: View {
                         Group {
                             if cargando {
                                 ProgressView()
-                                    .tint(.black)
+                                    .tint(.white)
                             } else {
                                 Text("Registrarse")
                             }
@@ -80,7 +95,7 @@ struct RegistrationView: View {
                         .fontWeight(.bold)
                         .padding()
                         .frame(maxWidth: 350)
-                        .background(Color.yellow)
+                        .background(Color.red)
                         .cornerRadius(10)
                         .clipShape(Capsule())
                     }
