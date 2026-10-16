@@ -94,10 +94,7 @@ struct ReportDetailsView: View {
                             .foregroundColor(.white)
                             .fontWeight(.bold)
                     
-                        if reporte.evidencia.isEmpty {
-                            Text("No hay evidencia adjunta a este reporte")
-                                .foregroundColor(.white)
-                        } else {
+                        if !reporte.evidencia.isEmpty {
                             ScrollView(.horizontal) {
                                 HStack(spacing: 15) {
                                     ForEach(reporte.evidencia.indices, id: \.self) {
@@ -111,8 +108,30 @@ struct ReportDetailsView: View {
                                         }
                                     }
                                 }
-                                .padding(.horizontal)
                             }
+                        } else if let imagePath = reporte.imageUrl,
+                                  let imageURL = URL(
+                                      string: imagePath,
+                                      relativeTo: APIClient.baseURL
+                                  ) {
+                            AsyncImage(url: imageURL) { phase in
+                                if let image = phase.image {
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(maxWidth: 300, maxHeight: 300)
+                                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                                } else if phase.error != nil {
+                                    Text("No se pudo cargar la fotografía.")
+                                        .foregroundColor(.white)
+                                } else {
+                                    ProgressView("Cargando fotografía...")
+                                        .tint(.white)
+                                }
+                            }
+                        } else {
+                            Text("No hay evidencia adjunta a este reporte.")
+                                .foregroundColor(.white)
                         }
                     }
                 }

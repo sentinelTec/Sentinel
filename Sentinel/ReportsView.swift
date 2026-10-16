@@ -8,57 +8,22 @@
 import SwiftUI
 
 struct ReportsView: View {
+    @EnvironmentObject private var session: SessionManager
     @State private var textoBusqueda = ""
     @State private var categoriaSeleccionada = "Todos"
+    @State private var reportes: [Reporte] = []
+    @State private var mostrarLogin = false
+    @State private var mostrarCrearReporte = false
+    @State private var cargando = false
+    @State private var errorMensaje: String?
+    @State private var mostrarAviso = false
     
-    @State private var reportes: [Reporte] = [
-        Reporte(
-            titulo: "Infracción por exceso de velocidad",
-            url: "www.finammx.vip",
-            descripcion: "Reporte relacionado con una supuesta infracción de tránsito.",
-            categoria: "Circulación y Seguridad",
-            estadoValidacion: .fraude
-        ),
-        
-        Reporte(
-            titulo: "Estacionamiento prohibido",
-            url: "www.radar-gob.com/spd",
-            descripcion: "Reporte de un vehículo estacionado en una zona no permitida.",
-            categoria: "Estacionamiento",
-            estadoValidacion: .fraude
-        ),
-        
-        Reporte(
-            titulo: "Seguro expirado",
-            url: "www.vehiculos.mx",
-            descripcion: "Reporte relacionado con la documentación del vehículo.",
-            categoria: "Administrativas",
-            estadoValidacion: .enRevision
-        ),
-        
-        Reporte(
-            titulo: "Tránsitos impagos",
-            url: "https://bienk.lol.mx",
-            descripcion: "Reporte de falta de pagos de multas de tránsito.",
-            categoria: "Circulación y Seguridad",
-            estadoValidacion: .confiable
-        ),
-        
-        Reporte(
-            titulo: "Irregularidad física",
-            url: "www.infraccion-express.com/park",
-            descripcion: "Reporte relacionado con irregularidad física del vehículo.",
-            categoria: "Estado del vehículo",
-            estadoValidacion: .enRevision
-        ),
-        
-        Reporte(
-            titulo: "Falta del cinturón de seguridad",
-            url: "www.infraccion-express.com",
-            descripcion: "Reporte de falta de cinturón de seguridad durante manejo.",
-            categoria: "Circulación y Seguridad",
-            estadoValidacion: .fraude
-        )
+    private let categorias = [
+        "Todos",
+        "Circulación y Seguridad",
+        "Estacionamiento",
+        "Administrativa",
+        "Estado del vehículo"
     ]
     
     var reportesFiltrados: [Reporte] {
@@ -89,12 +54,14 @@ struct ReportsView: View {
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
                             
-                            NavigationLink {
-                                CreateReportView { nuevoReporte in
-                                    reportes.append(nuevoReporte)
+                            Button {
+                                if session.isAuthenticated {
+                                    mostrarCrearReporte = true
+                                } else {
+                                    mostrarLogin = true
                                 }
                             } label: {
-                                Label("", systemImage: "plus.square")
+                                Image(systemName: "plus.square")
                                     .frame(width: 50, height: 50)
                                     .font(.system(size: 30))
                                     .foregroundColor(.white)
@@ -106,6 +73,7 @@ struct ReportsView: View {
                             Image(systemName: "magnifyingglass")
                                 .foregroundColor(.gray)
                             TextField("Buscar reporte o url", text: $textoBusqueda)
+                                .textInputAutocapitalization(.never)
                         }
                         .padding()
                         .background(Color(red: 237/255, green: 237/255, blue: 237/255))
@@ -177,33 +145,99 @@ struct ReportsView: View {
                             .padding(.horizontal)
                         }
                         
-                        LazyVStack(spacing: 10) {
-                            ForEach(reportesFiltrados) {
-                                reporte in
-                                NavigationLink {
-                                    ReportDetailsView(reporte: reporte)
-                                } label: {
-                                    ReportTableViewCell(reporte: reporte)
+                        if cargando {
+                            ProgressView("Cargando reportes...")
+                                .tint(.white)
+                                .foregroundColor(.white)
+                                .padding()
+                        } else {
+                            LazyVStack(spacing: 10) {
+                                ForEach(reportesFiltrados) {
+                                    reporte in
+                                    NavigationLink {
+                                        ReportDetailsView(reporte: reporte)
+                                    } label: {
+                                        ReportTableViewCell(reporte: reporte)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
+                            }
+                            .padding(.horizontal)
+                            
+                            if reportesFiltrados.isEmpty && !cargando && errorMensaje == nil {
+                                Text("No se encontraron reportes")
+                                    .foregroundColor(.white)
+                                    .font(.headline)
+                                    .padding()
                             }
                         }
-                        .padding(.horizontal)
                         
-                        if reportesFiltrados.isEmpty {
-                            Text("No se encontraron reportes")
+                        if let errorMensaje {
+                            Text(errorMensaje)
                                 .foregroundColor(.white)
-                                .font(.headline)
-                                .padding()
+                                .padding(.horizontal)
+                                .multilineTextAlignment(.center)
                         }
                     }
-                    .frame(maxWidth: 350)
+                    .padding(.vertical)
+                    .frame(maxWidth: 360)
                 }
             }
+            
+            .navigationDestination(isPresented: $mostrarLogin) {
+                LoginView {
+                    mostrarLogin = false
+                    mostrarCrearReporte = true
+                }
+            }
+            
+            .navigationDestination(isPresented: $mostrarCrearReporte) {
+                CreateReportView { nuevoReporte in
+                    let guardado = try await session.createReport(nuevoReporte)
+                    reportes.insert(guardado, at: 0)
+                }
+            }
+            
+            .task {
+                    await cargarReportes()
+            }
+            
+            .onChange(of: session.isAuthenticated) { _, _ in
+                Task {
+                    await cargarReportes()
+                }
+            }
+            
+            .alert("Aviso", isPresented: $mostrarAviso) {
+                Button("Aceptar", role: .cancel) {}
+            } message: {
+                Text(session.warningMessage ?? "")
+            }
+            
+            .onChange(of: session.warningMessage) { _, mensaje in
+                if mensaje != nil {
+                    mostrarAviso = true
+                }
+            }
+        }
+    }
+    
+    @MainActor
+    private func cargarReportes() async {
+        cargando = true
+        errorMensaje = nil
+        defer { cargando = false }
+
+        do {
+            reportes = try await session.fetchReports()
+        } catch {
+            errorMensaje =
+                "No se pudieron cargar los reportes: \(error.localizedDescription)"
         }
     }
 }
 
 #Preview {
     ReportsView()
+        .environmentObject(SessionManager())
 }
