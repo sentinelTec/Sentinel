@@ -110,10 +110,7 @@ struct ReportDetailsView: View {
                                 }
                             }
                         } else if let imagePath = reporte.imageUrl,
-                                  let imageURL = URL(
-                                      string: imagePath,
-                                      relativeTo: APIClient.baseURL
-                                  ) {
+                                  let imageURL = APIClient.url(for: imagePath) {
                             AsyncImage(url: imageURL) { phase in
                                 if let image = phase.image {
                                     image

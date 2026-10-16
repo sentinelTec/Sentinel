@@ -233,21 +233,27 @@ final class SessionManager: ObservableObject {
         var reporteGuardado = mapReport(response)
         reporteGuardado.evidencia = reporte.evidencia
 
-        if let imagen = reporte.evidencia.first {
-           let reportID = response.id
+        var fallidas = 0
 
+        for imagen in reporte.evidencia {
             do {
                 let upload: UploadImageResponse =
                     try await authorizedUploadImage(
-                        reportID: reportID,
+                        reportID: response.id,
                         imageData: imagen
                     )
 
-                reporteGuardado.imageUrl = upload.imageUrl
+                if reporteGuardado.imageUrl == nil {
+                    reporteGuardado.imageUrl = upload.url
+                }
             } catch {
-                warningMessage =
-                    "El reporte se creó correctamente, pero no se pudo subir la fotografía: \(error.localizedDescription)"
+                fallidas += 1
             }
+        }
+
+        if fallidas > 0 {
+            warningMessage =
+                "El reporte se creó correctamente, pero no se pudieron subir \(fallidas) de \(reporte.evidencia.count) fotografías."
         }
 
         return reporteGuardado
