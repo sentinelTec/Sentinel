@@ -238,7 +238,7 @@ struct CreateReportView: View {
         reporte.estadoValidacion = .enRevision
         
         reporte.evidencia = imagenes.compactMap {
-            $0.jpegData(compressionQuality: 0.8)
+            $0.jpegParaSubir()
         }
         
         do {
@@ -253,6 +253,26 @@ struct CreateReportView: View {
     }
 }
 
+
+extension UIImage {
+    func jpegParaSubir(maximoBytes: Int = 4_500_000, ladoMaximo: CGFloat = 2048) -> Data? {
+        let escala = min(1, ladoMaximo / max(size.width, size.height))
+        let nuevoTamano = CGSize(width: size.width * escala, height: size.height * escala)
+        let formato = UIGraphicsImageRendererFormat.default()
+        formato.scale = 1
+        let redimensionada = UIGraphicsImageRenderer(size: nuevoTamano, format: formato).image { _ in
+            draw(in: CGRect(origin: .zero, size: nuevoTamano))
+        }
+        var calidad: CGFloat = 0.8
+        while calidad >= 0.3 {
+            if let datos = redimensionada.jpegData(compressionQuality: calidad), datos.count <= maximoBytes {
+                return datos
+            }
+            calidad -= 0.1
+        }
+        return nil
+    }
+}
 
 #Preview {
     CreateReportView{ _ in
