@@ -27,7 +27,7 @@ struct CreateReportView: View {
             ScrollView(.vertical) {
                 Text("Nuevo reporte")
                     .font(.largeTitle)
-                    .foregroundColor(.white)
+                    .foregroundColor(.red)
                     .fontWeight(.bold)
                     .padding()
                 
@@ -39,6 +39,7 @@ struct CreateReportView: View {
                             .fontWeight(.bold)
                         
                         TextField("", text: $reporte.titulo)
+                            .foregroundStyle(Color.red)
                             .padding()
                             .frame(maxWidth: 350, maxHeight: 30)
                             .background(Color.white)
@@ -52,6 +53,7 @@ struct CreateReportView: View {
                             .fontWeight(.bold)
                         
                         TextField("", text: $reporte.url)
+                            .foregroundStyle(Color.red)
                             .padding()
                             .frame(maxWidth: 350, maxHeight: 30)
                             .background(Color.white)
@@ -65,6 +67,7 @@ struct CreateReportView: View {
                             .fontWeight(.bold)
                         
                         TextField("", text: $reporte.descripcion)
+                            .foregroundStyle(Color.red)
                             .padding()
                             .frame(maxWidth: 350, maxHeight: 150)
                             .background(Color.white)
@@ -91,6 +94,7 @@ struct CreateReportView: View {
                                 .tag("Estado del vehículo")
                         }
                         .pickerStyle(.menu)
+                        .tint(.red)
                         .padding()
                         .frame(maxWidth: 350)
                         .background(Color.white)
@@ -110,10 +114,10 @@ struct CreateReportView: View {
                                 matching: .images
                             ) {
                                 Label("Galería", systemImage: "photo")
-                                    .foregroundColor(.black)
+                                    .foregroundColor(.white)
                                     .fontWeight(.bold)
                                     .padding()
-                                    .background(Color.white)
+                                    .background(Color.red)
                                     .clipShape(Capsule())
                             }
                             
@@ -123,10 +127,10 @@ struct CreateReportView: View {
                                 }
                             } label: {
                                 Label("Cámara", systemImage: "camera")
-                                    .foregroundColor(.black)
+                                    .foregroundColor(.white)
                                     .fontWeight(.bold)
                                     .padding()
-                                    .background(Color.white)
+                                    .background(Color.red)
                                     .clipShape(Capsule())
                             }
                         }
@@ -149,7 +153,7 @@ struct CreateReportView: View {
                                                 Image(systemName: "xmark.circle.fill")
                                                     .font(.title2)
                                                     .foregroundColor(.white)
-                                                    .background(Circle().fill(Color.black.opacity(0.6)))
+                                                    .background(Circle().fill(Color.white))
                                             }
                                             .padding()
                                         }
@@ -168,7 +172,7 @@ struct CreateReportView: View {
                         HStack {
                             if guardando {
                                 ProgressView()
-                                    .tint(.black)
+                                    .tint(.white)
                             }
 
                             Text(guardando ? "Guardando..." : "Registrar reporte")
@@ -177,14 +181,14 @@ struct CreateReportView: View {
                         }
                         .padding()
                         .scaledToFit()
-                        .background(Color.yellow)
+                        .background(Color.red)
                         .cornerRadius(10)
                         .clipShape(Capsule())
                     }
                     .disabled(guardando)
                     if erroresFormulario.count > 0 {
                         Errors(errores: erroresFormulario)
-                            .foregroundStyle(Color.white)
+                            .foregroundStyle(Color.red)
                             .frame(maxWidth: 350)
                             .multilineTextAlignment(.center)
                     }

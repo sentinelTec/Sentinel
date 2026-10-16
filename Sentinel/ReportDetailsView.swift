@@ -19,14 +19,14 @@ struct ReportDetailsView: View {
                 VStack(spacing: 10) {
                     Text("Detalle del reporte")
                         .font(.largeTitle)
-                        .foregroundColor(.white)
+                        .foregroundColor(.red)
                         .fontWeight(.bold)
                         .padding()
                     
                     VStack(spacing: 5) {
                         Text(reporte.titulo)
                             .font(.title)
-                            .foregroundColor(.white)
+                            .foregroundColor(.red)
                             .fontWeight(.bold)
                             .multilineTextAlignment(.center)
                     }
@@ -53,7 +53,7 @@ struct ReportDetailsView: View {
                             .fontWeight(.bold)
                         
                         Text(reporte.url)
-                            .foregroundColor(.black)
+                            .foregroundColor(.red)
                             .padding()
                             .frame(maxWidth: 350, maxHeight: 30)
                             .background(Color.white)
@@ -67,7 +67,7 @@ struct ReportDetailsView: View {
                             .fontWeight(.bold)
                         
                         Text(reporte.descripcion)
-                            .foregroundColor(.black)
+                            .foregroundColor(.red)
                             .padding()
                             .frame(maxWidth: 350, maxHeight: 150)
                             .background(Color.white)
@@ -81,7 +81,7 @@ struct ReportDetailsView: View {
                             .fontWeight(.bold)
                         
                         Text(reporte.categoria)
-                            .foregroundColor(.black)
+                            .foregroundColor(.red)
                             .padding()
                             .frame(maxWidth: 350, maxHeight: 30)
                             .background(Color.white)
@@ -160,7 +160,7 @@ struct ReportDetailsView: View {
             return Color.yellow
             
         case .fraude:
-            return Color.red
+            return Color(red: 224/255, green: 27/255, blue: 16/255)
             
         case .confiable:
             return Color.green

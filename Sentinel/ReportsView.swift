@@ -52,7 +52,7 @@ struct ReportsView: View {
                             Text("Reportes recientes")
                                 .font(.title)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .foregroundColor(.red)
                             
                             Button {
                                 if session.isAuthenticated {
@@ -64,19 +64,24 @@ struct ReportsView: View {
                                 Image(systemName: "plus.square")
                                     .frame(width: 50, height: 50)
                                     .font(.system(size: 30))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.red)
                             }
                         }
                         .padding(.horizontal)
                         
                         HStack {
                             Image(systemName: "magnifyingglass")
-                                .foregroundColor(.gray)
-                            TextField("Buscar reporte o url", text: $textoBusqueda)
+                                .foregroundColor(.white)
+                            TextField("Buscar reporte o url", text: $textoBusqueda,
+                                prompt: Text("Buscar reporte o url")
+                                    .foregroundColor(.white)
+                                    .italic()
+                                )
                                 .textInputAutocapitalization(.never)
+                                .foregroundStyle(Color.white)
                         }
                         .padding()
-                        .background(Color(red: 237/255, green: 237/255, blue: 237/255))
+                        .background(Color(red: 194/255, green: 194/255, blue: 194/255))
                         .clipShape(Capsule())
                         .padding(.horizontal)
                         
@@ -85,60 +90,60 @@ struct ReportsView: View {
                                 Button("Todos") {
                                     categoriaSeleccionada = "Todos"
                                 }
-                                .foregroundColor(.black)
+                                .foregroundColor(.white)
                                 .fontWeight(.bold)
                                 .frame(maxHeight: 5)
                                 .scaledToFill()
                                 .padding()
-                                .background(categoriaSeleccionada == "Todos" ? Color.yellow : Color.white)
+                                .background(categoriaSeleccionada == "Todos" ? Color.red : Color(red: 194/255, green: 194/255, blue: 194/255))
                                 .cornerRadius(10)
                                 .clipShape(Capsule())
                                 
                                 Button("Circulación y Seguridad") {
                                     categoriaSeleccionada = "Circulación y Seguridad"
                                 }
-                                .foregroundColor(.black)
+                                .foregroundColor(.white)
                                 .fontWeight(.bold)
                                 .frame(maxHeight: 5)
                                 .scaledToFill()
                                 .padding()
-                                .background(categoriaSeleccionada == "Circulación y Seguridad" ? Color.yellow : Color.white)
+                                .background(categoriaSeleccionada == "Circulación y Seguridad" ? Color.red : Color(red: 194/255, green: 194/255, blue: 194/255))
                                 .cornerRadius(10)
                                 .clipShape(Capsule())
                                 
                                 Button("Estacionamiento") {
                                     categoriaSeleccionada = "Estacionamiento"
                                 }
-                                .foregroundColor(.black)
+                                .foregroundColor(.white)
                                 .fontWeight(.bold)
                                 .frame(maxHeight: 5)
                                 .scaledToFill()
                                 .padding()
-                                .background(categoriaSeleccionada == "Estacionamiento" ? Color.yellow : Color.white)
+                                .background(categoriaSeleccionada == "Estacionamiento" ? Color.red : Color(red: 194/255, green: 194/255, blue: 194/255))
                                 .cornerRadius(10)
                                 .clipShape(Capsule())
                                 
                                 Button("Administrativas") {
                                     categoriaSeleccionada = "Administrativas"
                                 }
-                                .foregroundColor(.black)
+                                .foregroundColor(.white)
                                 .fontWeight(.bold)
                                 .frame(maxHeight: 5)
                                 .scaledToFill()
                                 .padding()
-                                .background(categoriaSeleccionada == "Administrativas" ? Color.yellow : Color.white)
+                                .background(categoriaSeleccionada == "Administrativas" ? Color.red : Color(red: 194/255, green: 194/255, blue: 194/255))
                                 .cornerRadius(10)
                                 .clipShape(Capsule())
                                 
                                 Button("Estado del vehículo") {
                                     categoriaSeleccionada = "Estado del vehículo"
                                 }
-                                .foregroundColor(.black)
+                                .foregroundColor(.white)
                                 .fontWeight(.bold)
                                 .frame(maxHeight: 5)
                                 .scaledToFill()
                                 .padding()
-                                .background(categoriaSeleccionada == "Estado del vehículo" ? Color.yellow : Color.white)
+                                .background(categoriaSeleccionada == "Estado del vehículo" ? Color.red : Color(red: 194/255, green: 194/255, blue: 194/255))
                                 .cornerRadius(10)
                                 .clipShape(Capsule())
                             }
@@ -148,7 +153,7 @@ struct ReportsView: View {
                         if cargando {
                             ProgressView("Cargando reportes...")
                                 .tint(.white)
-                                .foregroundColor(.white)
+                                .foregroundColor(.red)
                                 .padding()
                         } else {
                             LazyVStack(spacing: 10) {
@@ -166,7 +171,7 @@ struct ReportsView: View {
                             
                             if reportesFiltrados.isEmpty && !cargando && errorMensaje == nil {
                                 Text("No se encontraron reportes")
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.red)
                                     .font(.headline)
                                     .padding()
                             }
@@ -174,7 +179,7 @@ struct ReportsView: View {
                         
                         if let errorMensaje {
                             Text(errorMensaje)
-                                .foregroundColor(.white)
+                                .foregroundColor(.red)
                                 .padding(.horizontal)
                                 .multilineTextAlignment(.center)
                         }

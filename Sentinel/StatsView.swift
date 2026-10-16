@@ -31,19 +31,18 @@ struct StatsView: View {
                         Text("Estadísticas")
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(.red)
                         
                         if cargando {
                             ProgressView("Cargando estadísticas...")
                                 .tint(.white)
-                                .foregroundColor(.white)
                         } else {
                             if let resumen {
                                 VStack(alignment: .leading, spacing: 12) {
                                     Text("Resumen general")
                                         .font(.title2)
                                         .fontWeight(.bold)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.white)
                                     
                                     datoResumen("Total de reportes", valor: resumen.totalReports)
                                     
@@ -55,7 +54,7 @@ struct StatsView: View {
                                 }
                                 .padding()
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.white)
+                                .background(Color.red)
                                 .clipShape(RoundedRectangle(cornerRadius: 16))
                             }
                             
@@ -63,7 +62,7 @@ struct StatsView: View {
                                 Text("Reportes por mes")
                                     .font(.title2)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.red)
                                 
                                 if mesesOrdenados.isEmpty {
                                     Text("No hay estadísticas mensuales disponibles.")
@@ -74,7 +73,7 @@ struct StatsView: View {
                                             x: .value("Mes", item.month),
                                             y: .value("Reportes", item.total)
                                         )
-                                        .foregroundStyle(Color.yellow)
+                                        .foregroundStyle(Color.red)
                                     }
                                     .frame(height: 230)
                                     .chartYAxis {
@@ -90,12 +89,12 @@ struct StatsView: View {
                                 Text("Reportes por categoría")
                                     .font(.title2)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.red)
                                 
                                 ForEach(categorias) { categoria in
                                     HStack {
                                         Text(categoria.categoryName)
-                                            .foregroundColor(.black)
+                                            .foregroundColor(.red)
                                             .fontWeight(.bold)
                                         
                                         Spacer()
@@ -105,7 +104,7 @@ struct StatsView: View {
                                             .fontWeight(.bold)
                                             .padding(.horizontal, 12)
                                             .padding(.vertical, 6)
-                                            .background(Color.yellow)
+                                            .background(Color(red: 194/255, green: 194/255, blue: 194/255))
                                             .clipShape(Capsule())
                                     }
                                     .padding()
@@ -144,7 +143,7 @@ struct StatsView: View {
     ) -> some View {
         HStack {
             Text(titulo)
-                .foregroundColor(.black)
+                .foregroundColor(.white)
 
             Spacer()
 
@@ -153,7 +152,7 @@ struct StatsView: View {
                 .fontWeight(.bold)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(Color.yellow)
+                .background(Color(red: 194/255, green: 194/255, blue: 194/255))
                 .clipShape(Capsule())
         }
     }

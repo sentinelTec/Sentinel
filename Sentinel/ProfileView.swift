@@ -23,21 +23,21 @@ struct ProfileView: View {
                     if session.isAuthenticated {
                         Text("Mi perfil")
                             .font(.largeTitle)
-                            .foregroundColor(.white)
+                            .foregroundColor(.red)
                             .fontWeight(.bold)
                             
                         Image(systemName: "person.crop.circle.fill")
                             .font(.system(size: 80))
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(red: 194/255, green: 194/255, blue: 194/255))
 
                         Text(session.currentUser?.name ?? "Usuario de Sentinel")
                             .font(.title2)
-                            .foregroundColor(.white)
+                            .foregroundColor(.red)
                             .fontWeight(.bold)
 
                         if let email = session.currentUser?.email {
                             Text(email)
-                                .foregroundColor(.white)
+                                .foregroundColor(.red)
                         }
                         
                         NavigationLink {
@@ -54,12 +54,12 @@ struct ProfileView: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(.white)
                                     .frame(width: 38, height: 38)
-                                    .background(Color(red: 255/255, green: 224/255, blue: 85/255))
+                                    .background(Color(red: 194/255, green: 194/255, blue: 194/255))
                                     .clipShape(Capsule())
                             }
                             .padding(.horizontal, 15)
                             .frame(maxWidth: 350, maxHeight: 50)
-                            .background(Color.yellow)
+                            .background(Color.red)
                             .clipShape(Capsule())
                         }
                         .buttonStyle(.plain)
@@ -71,7 +71,7 @@ struct ProfileView: View {
                         .fontWeight(.bold)
                         .padding()
                         .frame(maxWidth: 350)
-                        .background(Color.yellow)
+                        .background(Color.red)
                         .clipShape(Capsule())
 
                         .alert("¿Deseas cerrar sesión?", isPresented: $logoutAlert) {
@@ -88,7 +88,7 @@ struct ProfileView: View {
                     } else {
                         Text("¿No tienes cuenta?")
                             .font(.largeTitle)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(red: 194/255, green: 194/255, blue: 194/255))
                             .fontWeight(.bold)
                         
                         NavigationLink {
@@ -99,7 +99,7 @@ struct ProfileView: View {
                                 .fontWeight(.bold)
                                 .padding()
                                 .frame(maxWidth: 350)
-                                .background(Color.yellow)
+                                .background(Color.red)
                                 .cornerRadius(10)
                                 .clipShape(Capsule())
                         }
@@ -112,7 +112,7 @@ struct ProfileView: View {
                                 .fontWeight(.bold)
                                 .padding()
                                 .frame(maxWidth: 350)
-                                .background(Color.yellow)
+                                .background(Color.red)
                                 .cornerRadius(10)
                                 .clipShape(Capsule())
                         }
@@ -120,11 +120,11 @@ struct ProfileView: View {
                     
                     HStack(spacing: 15) {
                         Text("¿Necesitas ayuda?")
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(red: 194/255, green: 194/255, blue: 194/255))
                         Button("Contáctanos") {
                             contactAlert = true
                         }
-                        .foregroundColor(Color(red: 51/255, green: 190/255, blue: 255/255))
+                        .foregroundColor(Color.red)
                         .italic()
                     }
                     .alert("Medios de contactos de la organización:", isPresented: $contactAlert) {

@@ -22,7 +22,6 @@ struct MyReports: View {
                 if cargando {
                     ProgressView("Cargando mis reportes...")
                         .tint(.white)
-                        .foregroundColor(.white)
                 } else if let errorMensaje {
                     Text(errorMensaje)
                         .foregroundColor(.white)
@@ -39,7 +38,7 @@ struct MyReports: View {
                         Text("Mis reportes")
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(.red)
                         
                         LazyVStack(spacing: 10) {
                             ForEach(reportes) { reporte in
