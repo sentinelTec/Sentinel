@@ -31,7 +31,7 @@ struct RegistrationView: View {
                         .foregroundColor(.red)
                     
                     TextField("", text: $usuario.nombreDeUsuario,
-                        prompt: Text("Ingresa tu usuario")
+                        prompt: Text("Nombre de usuario")
                             .foregroundColor(.white)
                             .italic()
                         )
