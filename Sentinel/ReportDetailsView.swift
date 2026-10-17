@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct ReportDetailsView: View {
+    @EnvironmentObject private var session: SessionManager
     let reporte: Reporte
+    @State private var imageUrl: String?
+    @State private var buscandoImagen = true
     
     var body: some View {
         ZStack {
@@ -109,7 +112,10 @@ struct ReportDetailsView: View {
                                     }
                                 }
                             }
-                        } else if let imagePath = reporte.imageUrl,
+                        } else if buscandoImagen {
+                            ProgressView("Cargando fotografía...")
+                                .tint(.white)
+                        } else if let imagePath = imageUrl,
                                   let imageURL = APIClient.url(for: imagePath) {
                             AsyncImage(url: imageURL) { phase in
                                 if let image = phase.image {
@@ -135,6 +141,10 @@ struct ReportDetailsView: View {
                 .padding(.bottom, 30)
                 .frame(maxWidth: 350)
             }
+        }
+        .task {
+            imageUrl = await session.fetchImageURL(for: reporte)
+            buscandoImagen = false
         }
     }
     
@@ -175,4 +185,5 @@ struct ReportDetailsView: View {
                 estadoValidacion: .fraude
             )
     )
+    .environmentObject(SessionManager())
 }

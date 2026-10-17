@@ -202,6 +202,10 @@ struct ReportsView: View {
                     await cargarReportes()
             }
             
+            .refreshable {
+                await cargarReportes()
+            }
+            
             .onChange(of: session.isAuthenticated) { _, _ in
                 Task {
                     await cargarReportes()

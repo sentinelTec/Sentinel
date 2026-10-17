@@ -61,6 +61,10 @@ struct MyReports: View {
         .task {
             await cargarMisReportes()
         }
+        
+        .refreshable {
+            await cargarMisReportes()
+        }
     }
 
     @MainActor
