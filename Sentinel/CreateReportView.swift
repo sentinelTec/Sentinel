@@ -18,6 +18,7 @@ struct CreateReportView: View {
     @State private var erroresFormulario: [String] = []
     @State private var guardando = false
     var onSave: (Reporte) async throws -> Void
+    @State private var mostrarReporteExitoso = false
     
     var body: some View {
         ZStack {
@@ -39,6 +40,7 @@ struct CreateReportView: View {
                             .fontWeight(.bold)
                         
                         TextField("", text: $reporte.titulo)
+                            .autocorrectionDisabled()
                             .foregroundStyle(Color.red)
                             .padding()
                             .frame(maxWidth: 350, maxHeight: 30)
@@ -47,12 +49,14 @@ struct CreateReportView: View {
                     }
                     
                     VStack(spacing: 10) {
-                        Text("Información proporcionada")
+                        Text("Url o número de teléfono")
                             .font(.title3)
                             .foregroundColor(.white)
                             .fontWeight(.bold)
                         
                         TextField("", text: $reporte.url)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
                             .foregroundStyle(Color.red)
                             .padding()
                             .frame(maxWidth: 350, maxHeight: 30)
@@ -67,6 +71,7 @@ struct CreateReportView: View {
                             .fontWeight(.bold)
                         
                         TextField("", text: $reporte.descripcion)
+                            .autocorrectionDisabled()
                             .foregroundStyle(Color.red)
                             .padding()
                             .frame(maxWidth: 350, maxHeight: 150)
@@ -152,7 +157,7 @@ struct CreateReportView: View {
                                             } label: {
                                                 Image(systemName: "xmark.circle.fill")
                                                     .font(.title2)
-                                                    .foregroundColor(.white)
+                                                    .foregroundColor(.red)
                                                     .background(Circle().fill(Color.white))
                                             }
                                             .padding()
@@ -209,6 +214,14 @@ struct CreateReportView: View {
                 imagenTomada = nil
             }
         }
+        
+        .alert("Reporte enviado correctamente", isPresented: $mostrarReporteExitoso) {
+            Button("Aceptar") {
+                dismiss()
+            }
+        } message: {
+            Text("Tu reporte fue enviado correctamente y se encuentra en proceso de revisión.")
+        }
     }
     
     private func cargarImagenes(_ items: [PhotosPickerItem]) {
@@ -243,7 +256,7 @@ struct CreateReportView: View {
         
         do {
             try await onSave(reporte)
-            dismiss()
+            mostrarReporteExitoso = true
         } catch {
             erroresFormulario = [
                 "No se pudo crear el reporte.",

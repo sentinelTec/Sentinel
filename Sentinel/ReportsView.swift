@@ -124,14 +124,14 @@ struct ReportsView: View {
                                 .clipShape(Capsule())
                                 
                                 Button("Administrativas") {
-                                    categoriaSeleccionada = "Administrativas"
+                                    categoriaSeleccionada = "Administrativa"
                                 }
                                 .foregroundColor(.white)
                                 .fontWeight(.bold)
                                 .frame(maxHeight: 5)
                                 .scaledToFill()
                                 .padding()
-                                .background(categoriaSeleccionada == "Administrativas" ? Color.red : Color(red: 194/255, green: 194/255, blue: 194/255))
+                                .background(categoriaSeleccionada == "Administrativa" ? Color.red : Color(red: 194/255, green: 194/255, blue: 194/255))
                                 .cornerRadius(10)
                                 .clipShape(Capsule())
                                 
@@ -213,7 +213,7 @@ struct ReportsView: View {
                 }
             }
             
-            .alert("Aviso", isPresented: $mostrarAviso) {
+            .alert("Advertencia", isPresented: $mostrarAviso) {
                 Button("Aceptar", role: .cancel) {}
             } message: {
                 Text(session.warningMessage ?? "")

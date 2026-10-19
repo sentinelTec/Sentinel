@@ -30,7 +30,6 @@ struct LoginView: View {
                             .italic()
                         )
                         .textInputAutocapitalization(.never)
-                        .keyboardType(.emailAddress)
                         .autocorrectionDisabled()
                         .foregroundStyle(Color.white)
                         .padding()
