@@ -29,7 +29,12 @@ enum APIError: LocalizedError {
 final class APIClient {
     static let shared = APIClient()
 
-    static let baseURL = URL(string: "http://localhost:3000")!
+    static let baseURL = URL(string: "http://localhost:3000/")!
+
+    static func url(for path: String) -> URL? {
+        let cleanPath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        return URL(string: cleanPath, relativeTo: baseURL)?.absoluteURL
+    }
 
     private let decoder = JSONDecoder()
 

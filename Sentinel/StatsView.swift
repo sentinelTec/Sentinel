@@ -166,17 +166,16 @@ struct StatsView: View {
         do {
             async let nuevoResumen = session.fetchSummary()
             async let nuevasCategorias = session.fetchCategoryStats()
-            async let nuevosMeses = session.fetchMonthlyStats()
+            async let nuevosMeses = try? session.fetchMonthlyStats()
 
             let resultados = try await (
                 nuevoResumen,
-                nuevasCategorias,
-                nuevosMeses
+                nuevasCategorias
             )
 
             resumen = resultados.0
             categorias = resultados.1
-            meses = resultados.2
+            meses = await nuevosMeses ?? []
         } catch {
             errorMensaje =
                 "No se pudieron cargar las estadísticas: \(error.localizedDescription)"

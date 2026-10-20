@@ -207,6 +207,21 @@ final class SessionManager: ObservableObject {
         return responses.map { mapReport($0) }
     }
 
+    func fetchImageURL(for reporte: Reporte) async -> String? {
+        guard let id = reporte.backendID else {
+            return reporte.imageUrl
+        }
+
+        if isAuthenticated,
+           let evidencias: [EvidenceDTO] = try? await authorizedRequest("reports/\(id)/evidence"),
+           let url = evidencias.first(where: { $0.type == "image" && $0.url != nil })?.url {
+            return url
+        }
+
+        let publicos = (try? await fetchReports()) ?? []
+        return publicos.first(where: { $0.backendID == id })?.imageUrl ?? reporte.imageUrl
+    }
+
     func createReport(_ reporte: Reporte) async throws -> Reporte {
         guard let categoryId = reporte.categoryIdBackend else {
             throw APIError.httpStatus(
@@ -233,21 +248,27 @@ final class SessionManager: ObservableObject {
         var reporteGuardado = mapReport(response)
         reporteGuardado.evidencia = reporte.evidencia
 
-        if let imagen = reporte.evidencia.first {
-           let reportID = response.id
+        var fallidas = 0
 
+        for imagen in reporte.evidencia {
             do {
                 let upload: UploadImageResponse =
                     try await authorizedUploadImage(
-                        reportID: reportID,
+                        reportID: response.id,
                         imageData: imagen
                     )
 
-                reporteGuardado.imageUrl = upload.imageUrl
+                if reporteGuardado.imageUrl == nil {
+                    reporteGuardado.imageUrl = upload.url
+                }
             } catch {
-                warningMessage =
-                    "El reporte se creó correctamente, pero no se pudo subir la fotografía: \(error.localizedDescription)"
+                fallidas += 1
             }
+        }
+
+        if fallidas > 0 {
+            warningMessage =
+                "El reporte se creó correctamente, pero no se pudieron subir \(fallidas) de \(reporte.evidencia.count) fotografías."
         }
 
         return reporteGuardado

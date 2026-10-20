@@ -80,7 +80,14 @@ struct ReportDTO: Decodable {
 
 struct UploadImageResponse: Decodable {
     let message: String?
-    let imageUrl: String?
+    let evidenceId: Int?
+    let url: String?
+}
+
+struct EvidenceDTO: Decodable {
+    let id: Int
+    let type: String
+    let url: String?
 }
 
 // MARK: - Estadísticas generales
