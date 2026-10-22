@@ -41,6 +41,17 @@
                ReferencedContainer = "container:Sentinel.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "76BE21B23089DCBC003A13A1"
+               BuildableName = "CreateReportTest.xctest"
+               BlueprintName = "CreateReportTest"
+               ReferencedContainer = "container:Sentinel.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
